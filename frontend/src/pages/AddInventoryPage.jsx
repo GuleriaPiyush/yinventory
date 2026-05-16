@@ -58,6 +58,8 @@ function AddInventoryPage() {
         barcode: ''
       });
       
+
+      //aafa
       // Optional: Redirect back to inventory list after a delay
       // setTimeout(() => navigate('/inventory'), 2000);
       
