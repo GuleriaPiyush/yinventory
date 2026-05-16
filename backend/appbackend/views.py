@@ -16,7 +16,7 @@ def InventoryList(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
-def InventoryCreate(request):
+def RestockProducts(request):
     data = request.data
     barcode = data.get('barcode')
 
@@ -56,8 +56,24 @@ def InventoryCreate(request):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     # If barcode doesn't exist yet, proceed with normal creation
-    serializer = ProductInventorySerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({"message": "barcode already exist kindly visit the  Add new items page "}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def AddnewProduct(request):
+    data = request.data
+    barcode = data.get('barcode')
+    if Product_Inventory.objects.filter(barcode=barcode).exists():
+        return Response({"message":"barcode already exist go to restock page"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        # serializer = ProductInventorySerializer(data=data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ProductInventorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)    

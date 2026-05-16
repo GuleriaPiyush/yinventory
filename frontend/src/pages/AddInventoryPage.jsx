@@ -1,26 +1,21 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 
-function AddInventoryPage() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
-
-  // Form state holding all fields from the Django model
+const AddInventoryPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     cost_price: '',
     selling_price: '',
     stock: '',
-    unit: 'kg', // Default choice from model
+    unit: 'kg', // default matching your choices in models.py
     barcode: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
+    setFormData(prevState => ({
+      ...prevState,
       [name]: value
     }));
   };
@@ -28,43 +23,37 @@ function AddInventoryPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccessMessage('');
+    setMessage({ type: '', text: '' });
 
     try {
-      // Assuming your backend routes are prefixed with /api/ in the main urls.py
-      const response = await fetch('http://127.0.0.1:8000/api/inventory/create/', {
+      const response = await fetch('http://127.0.0.1:8000/api/inventory/add-new/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        // Extract validation errors if any
-        throw new Error(JSON.stringify(errorData) || `Network error: ${response.status}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Product added successfully!' });
+        // Clear the form on success
+        setFormData({
+          name: '',
+          cost_price: '',
+          selling_price: '',
+          stock: '',
+          unit: 'kg',
+          barcode: ''
+        });
+      } else {
+        // Backend returns {"message":"..."} for barcode errors, or {"error": "..."}
+        const errorMsg = data.message || data.error || 'Failed to add product.';
+        setMessage({ type: 'error', text: errorMsg });
       }
-
-      setSuccessMessage('Product successfully added to inventory!');
-      // Reset form
-      setFormData({
-        name: '',
-        cost_price: '',
-        selling_price: '',
-        stock: '',
-        unit: 'kg',
-        barcode: ''
-      });
-      
-
-      //aafa
-      // Optional: Redirect back to inventory list after a delay
-      // setTimeout(() => navigate('/inventory'), 2000);
-      
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error occurred. Make sure the Django server is running.' });
     } finally {
       setLoading(false);
     }
@@ -72,148 +61,109 @@ function AddInventoryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="sm:flex sm:items-center mb-8">
-          <div className="sm:flex-auto">
-            <h1 className="text-2xl font-semibold text-gray-900">Add New Product</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Enter the details below to add a new item to your inventory.
-            </p>
-          </div>
-          <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-             {/* Note: This assumes you use react-router-dom for navigation */}
-            <button
-              onClick={() => navigate('/inventory')}
-              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-            >
-              Back to Inventory
-            </button>
-          </div>
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-8 py-6 border-b border-gray-100">
+          <h1 className="text-2xl font-semibold text-gray-900">Add New Product</h1>
+          <p className="mt-2 text-sm text-gray-600">Enter the details below to add a brand new product to your inventory.</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden p-6 sm:p-8">
-          {successMessage && (
-            <div className="mb-6 p-4 rounded-md bg-green-50 text-green-700 border border-green-200">
-              {successMessage}
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-6 p-4 rounded-md bg-red-50 text-red-700 border border-red-200">
-              Error adding product: {error}
+        <div className="p-8">
+          {message.text && (
+            <div className={`mb-6 p-4 rounded-md text-sm ${message.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+              {message.text}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-
             <div>
-              <label htmlFor="barcode" className="block text-sm font-medium text-gray-700">Barcode</label>
-              <div className="mt-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                placeholder="e.g. Fresh Apples"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Cost Price</label>
                 <input
-                  type="text"
-                  name="barcode"
-                  id="barcode"
-                  required
-                  value={formData.barcode}
+                  type="number"
+                  step="0.01"
+                  name="cost_price"
+                  value={formData.cost_price}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                  placeholder="Scan or enter barcode"
+                  required
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  placeholder="0.00"
                 />
               </div>
-            </div>
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Product Name</label>
-              <div className="mt-1">
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
                 <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  required
-                  value={formData.name}
+                  type="number"
+                  step="0.01"
+                  name="selling_price"
+                  value={formData.selling_price}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                  placeholder="e.g. Organic Apples"
+                  required
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  placeholder="0.00"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="cost_price" className="block text-sm font-medium text-gray-700">Cost Price ($)</label>
-                <div className="mt-1">
-                  <input
-                    type="number"
-                    step="0.01"
-                    name="cost_price"
-                    id="cost_price"
-                    required
-                    value={formData.cost_price}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                  />
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Initial Stock</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleChange}
+                  required
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  placeholder="0"
+                />
               </div>
 
               <div>
-                <label htmlFor="selling_price" className="block text-sm font-medium text-gray-700">Selling Price ($)</label>
-                <div className="mt-1">
-                  <input
-                    type="number"
-                    step="0.01"
-                    name="selling_price"
-                    id="selling_price"
-                    required
-                    value={formData.selling_price}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                  />
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                <select
+                  name="unit"
+                  value={formData.unit}
+                  onChange={handleChange}
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"
+                >
+                  <option value="kg">kg</option>
+                  <option value="grams">grams</option>
+                  <option value="pieces">pieces</option>
+                </select>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Initial Stock</label>
-                <div className="mt-1">
-                  <input
-                    type="number"
-                    step="0.01"
-                    name="stock"
-                    id="stock"
-                    required
-                    value={formData.stock}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="unit" className="block text-sm font-medium text-gray-700">Unit Type</label>
-                <div className="mt-1">
-                  <select
-                    name="unit"
-                    id="unit"
-                    required
-                    value={formData.unit}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                  >
-                    <option value="kg">Kilograms (kg)</option>
-                    <option value="grams">Grams</option>
-                    <option value="pieces">Pieces</option>
-                  </select>
-                </div>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Barcode</label>
+              <input
+                type="text"
+                name="barcode"
+                value={formData.barcode}
+                onChange={handleChange}
+                required
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                placeholder="Scan or enter barcode"
+              />
             </div>
 
-            
-
-            <div className="pt-4 flex justify-end">
+            <div className="pt-4 border-t border-gray-100">
               <button
                 type="submit"
                 disabled={loading}
-                className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
               >
                 {loading ? 'Adding Product...' : 'Add Product'}
               </button>
@@ -223,6 +173,6 @@ function AddInventoryPage() {
       </div>
     </div>
   );
-}
+};
 
 export default AddInventoryPage;
