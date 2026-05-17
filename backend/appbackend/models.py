@@ -58,7 +58,7 @@ class Sale_Item(models.Model):
 
     def save(self, *args, **kwargs):
 
-        if not self.price_at_sale:
+        if self.price_at_sale is None:
             self.price_at_sale = self.product.selling_price
 
         self.subtotal = self.quantity * self.price_at_sale

@@ -9,10 +9,6 @@ from decimal import Decimal
 import uuid
 from django.db import transaction
 from django.db.models import Q
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from decimal import Decimal
 
 
 
@@ -39,6 +35,9 @@ def RestockProducts(request):
                 added_stock = Decimal(str(data.get('stock', 0)))
                 added_cost = Decimal(str(data.get('cost_price', existing_product.cost_price)))
                 added_selling = Decimal(str(data.get('selling_price', existing_product.selling_price)))
+
+                if added_stock <= 0:
+                    return Response({"error": "Restock quantity must be strictly positive."}, status=status.HTTP_400_BAD_REQUEST)
 
                 old_stock = existing_product.stock
                 new_stock = old_stock + added_stock
@@ -86,6 +85,7 @@ def AddnewProduct(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def SearchProduct(request):
@@ -94,6 +94,7 @@ def SearchProduct(request):
     products = Product_Inventory.objects.all()
     if query:
         products = products.filter(Q(barcode__icontains=query) | Q(name__icontains=query))
+        
     
     serializer = ProductInventorySerializer(products, many=True)
     return Response(serializer.data)
@@ -132,10 +133,13 @@ def CreateSale(request):
             # 2. Process each item
             for item in items:
                 product_id = item.get('product_id')
-                quantity = Decimal(str(item.get('quantity')))
-                
                 # Get the product
                 product = Product_Inventory.objects.get(id=product_id)
+
+                quantity = Decimal(str(item.get('quantity')))
+                
+                if quantity <= 0:
+                    raise Exception(f"Quantity for {product.name} must be greater than zero.")
                 
                 # Deduct stock
                 if product.stock < quantity:
