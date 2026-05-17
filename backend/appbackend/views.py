@@ -6,13 +6,29 @@ from rest_framework.response import Response
 from rest_framework import status
 from decimal import Decimal
 
+#mainly for sales and sale_items views
 import uuid
 from django.db import transaction
 from django.db.models import Q
 
+#for authentication 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 
 
 # Create your views here.
+
+@api_view(['POST'])
+def LoginView(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = authenticate(username=username, password=password)
+    if user:
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({"token":token.key})
+    return Response({"error":"Invalid credentials"}, status=400)
 
 @api_view(['GET'])
 def InventoryList(request):
