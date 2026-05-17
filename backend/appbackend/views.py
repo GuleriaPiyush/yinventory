@@ -6,6 +6,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from decimal import Decimal
 
+import uuid
+from django.db import transaction
+from django.db.models import Q
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from decimal import Decimal
+
+
 
 # Create your views here.
 
@@ -57,7 +66,7 @@ def RestockProducts(request):
 
     # If barcode doesn't exist yet, proceed with normal creation
     
-    return Response({"message": "barcode already exist kindly visit the  Add new items page "}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"message": "barcode doesn't exist kindly visit the  Add new items page to add new items"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -76,4 +85,85 @@ def AddnewProduct(request):
         serializer = ProductInventorySerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)    
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def SearchProduct(request):
+    """Searches for products by barcode or name"""
+    query = request.GET.get('q', '')
+    if query:
+        # Search by barcode or name (case-insensitive)
+        products = Product_Inventory.objects.filter(Q(barcode__icontains=query) | Q(name__icontains=query))
+    else:
+        products = Product_Inventory.objects.none()
+    
+    serializer = ProductInventorySerializer(products, many=True)
+    return Response(serializer.data)
+@api_view(['POST'])
+def CreateSale(request):
+    """Creates a Sale, saves Sale Items, and deducts stock from Inventory"""
+    data = request.data
+    customer_name = data.get('customer_name', '')
+    customer_phone = data.get('customer_phone', '')
+    
+    # Convert empty strings to None to prevent PostgreSQL type errors (like 'invalid input syntax for type bigint')
+    if not customer_name:
+        customer_name = None
+    if not customer_phone:
+        customer_phone = None
+        
+    items = data.get('items', [])
+    if not items:
+        return Response({"error": "No items in the bill."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        # Use a transaction so if anything fails, no partial changes are saved
+        with transaction.atomic():
+            # 1. Create the main Sale record
+            transaction_id = str(uuid.uuid4())[:12].upper()
+            
+            sale = Sales.objects.create(
+                transaction_id=transaction_id,
+                customer_name=customer_name,
+                customer_phone=customer_phone,
+                amount=0, 
+                total_amount=0,
+                products="Recorded in Sale_Item" # Placeholder for your redundant text field
+            )
+            total_amount = Decimal('0.00')
+            # 2. Process each item
+            for item in items:
+                product_id = item.get('product_id')
+                quantity = Decimal(str(item.get('quantity')))
+                
+                # Get the product
+                product = Product_Inventory.objects.get(id=product_id)
+                
+                # Deduct stock
+                if product.stock < quantity:
+                    raise Exception(f"Not enough stock for {product.name}. Available: {product.stock}")
+                
+                product.stock -= quantity
+                product.save()
+                # 3. Create Sale_Item record
+                price_at_sale = product.selling_price
+                subtotal = quantity * price_at_sale
+                
+                Sale_Item.objects.create(
+                    sales=sale,
+                    product=product,
+                    quantity=quantity,
+                    price_at_sale=price_at_sale,
+                    subtotal=subtotal
+                )
+                total_amount += subtotal
+            # 4. Update the final sale totals
+            sale.amount = total_amount
+            sale.total_amount = total_amount
+            sale.save()
+            return Response({
+                "message": "Sale completed successfully", 
+                "transaction_id": transaction_id
+            }, status=status.HTTP_201_CREATED)
+            
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

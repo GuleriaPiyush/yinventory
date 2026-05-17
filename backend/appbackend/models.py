@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+
+
 # Create your models here.
 
 class Product_Inventory(models.Model):
@@ -43,7 +45,7 @@ class Sales(models.Model):
     total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     def __str__(self):
-        return self.transaction_id
+        return f"{self.transaction_id}, {self.total_amount}, {self.customer_name},"    
 
 
 
