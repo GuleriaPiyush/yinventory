@@ -90,15 +90,14 @@ def AddnewProduct(request):
 @api_view(['GET'])
 def SearchProduct(request):
     """Searches for products by barcode or name"""
-    query = request.GET.get('q', '')
+    query = request.GET.get('q','')
+    products = Product_Inventory.objects.all()
     if query:
-        # Search by barcode or name (case-insensitive)
-        products = Product_Inventory.objects.filter(Q(barcode__icontains=query) | Q(name__icontains=query))
-    else:
-        products = Product_Inventory.objects.none()
+        products = products.filter(Q(barcode__icontains=query) | Q(name__icontains=query))
     
     serializer = ProductInventorySerializer(products, many=True)
     return Response(serializer.data)
+
 @api_view(['POST'])
 def CreateSale(request):
     """Creates a Sale, saves Sale Items, and deducts stock from Inventory"""
@@ -167,3 +166,4 @@ def CreateSale(request):
             
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
