@@ -188,18 +188,19 @@ const SalesPage = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {searchResults.map((p) => (
-                    <tr key={p.id}>
+                    <tr 
+                      key={p.id}
+                      onClick={() => addToBill(p)}
+                      className="cursor-pointer hover:bg-gray-50 transition-colors group"
+                    >
                       <td className="px-4 py-3 text-sm text-gray-900">{p.name}</td>
                       <td className="px-4 py-3 text-sm text-gray-500">{p.barcode}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">${p.selling_price}</td>
                       <td className="px-4 py-3 text-sm text-gray-500">{p.stock} {p.unit}</td>
                       <td className="px-4 py-3 text-right">
-                        <button 
-                          onClick={() => addToBill(p)}
-                          className="text-indigo-600 hover:text-indigo-900 font-medium text-sm"
-                        >
+                        <span className="text-indigo-600 group-hover:text-indigo-900 font-medium text-sm transition-colors">
                           Add to Bill +
-                        </button>
+                        </span>
                       </td>
                     </tr>
                   ))}

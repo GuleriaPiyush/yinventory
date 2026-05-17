@@ -8,4 +8,5 @@ urlpatterns = [
     path("inventory/add-new/", views.AddnewProduct, name='add-new-product'),
     path('inventory/search/', views.SearchProduct, name='search-product'),
     path('sales/create/', views.CreateSale, name='create-sale'),
+    path('sales/graph/', views.SalesGraphData, name='sales-graph'),
 ]
