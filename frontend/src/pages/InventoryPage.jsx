@@ -7,7 +7,10 @@ function InventoryPage() {
 
   useEffect(() => {
     // Fetch data from the Django backend
-    fetch('http://127.0.0.1:8000/api/inventory/')
+    const token = localStorage.getItem('token');
+    fetch('http://127.0.0.1:8000/api/inventory/', {
+      headers: { 'Authorization': `Token ${token}` }
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Network error: ${response.status} ${response.statusText}`);

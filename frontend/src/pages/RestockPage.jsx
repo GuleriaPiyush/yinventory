@@ -1,27 +1,27 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function RestockPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Form state holding all fields from the Django model
   const [formData, setFormData] = useState({
-    name: '',
-    cost_price: '',
-    selling_price: '',
-    stock: '',
-    unit: 'kg', // Default choice from model
-    barcode: ''
+    name: "",
+    cost_price: "",
+    selling_price: "",
+    stock: "",
+    unit: "kg", // Default choice from model
+    barcode: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -29,40 +29,43 @@ function RestockPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccessMessage('');
+    setSuccessMessage("");
 
     try {
       // Assuming your backend routes are prefixed with /api/ in the main urls.py
-      const response = await fetch('http://127.0.0.1:8000/api/inventory/create/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/inventory/create/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         },
-        body: JSON.stringify(formData),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
         // Extract validation errors if any
-        throw new Error(errorData.message || `Network error: ${response.status}`);
+        throw new Error(
+          errorData.message || `Network error: ${response.status}`,
+        );
       }
 
-      setSuccessMessage('Product successfully added to inventory!');
+      setSuccessMessage("Product successfully added to inventory!");
       // Reset form
       setFormData({
-        name: '',
-        cost_price: '',
-        selling_price: '',
-        stock: '',
-        unit: 'kg',
-        barcode: ''
+        name: "",
+        cost_price: "",
+        selling_price: "",
+        stock: "",
+        unit: "kg",
+        barcode: "",
       });
-      
 
       //aafa
       // Optional: Redirect back to inventory list after a delay
       // setTimeout(() => navigate('/inventory'), 2000);
-      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -75,15 +78,17 @@ function RestockPage() {
       <div className="max-w-3xl mx-auto">
         <div className="sm:flex sm:items-center mb-8">
           <div className="sm:flex-auto">
-            <h1 className="text-2xl font-semibold text-gray-900">Restock Items</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Restock Items
+            </h1>
             <p className="mt-2 text-sm text-gray-600">
               Enter the details below to restock items in your inventory.
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-             {/* Note: This assumes you use react-router-dom for navigation */}
+            {/* Note: This assumes you use react-router-dom for navigation */}
             <button
-              onClick={() => navigate('/inventory')}
+              onClick={() => navigate("/inventory")}
               className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             >
               Back to Inventory
@@ -105,9 +110,13 @@ function RestockPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-
             <div>
-              <label htmlFor="barcode" className="block text-sm font-medium text-gray-700">Barcode</label>
+              <label
+                htmlFor="barcode"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Barcode
+              </label>
               <div className="mt-1">
                 <input
                   type="text"
@@ -122,7 +131,12 @@ function RestockPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Product Name</label>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Product Name
+              </label>
               <div className="mt-1">
                 <input
                   type="text"
@@ -139,7 +153,12 @@ function RestockPage() {
 
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="cost_price" className="block text-sm font-medium text-gray-700">Cost Price ($)</label>
+                <label
+                  htmlFor="cost_price"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Cost Price ($)
+                </label>
                 <div className="mt-1">
                   <input
                     type="number"
@@ -155,7 +174,12 @@ function RestockPage() {
               </div>
 
               <div>
-                <label htmlFor="selling_price" className="block text-sm font-medium text-gray-700">Selling Price ($)</label>
+                <label
+                  htmlFor="selling_price"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Selling Price ($)
+                </label>
                 <div className="mt-1">
                   <input
                     type="number"
@@ -173,7 +197,12 @@ function RestockPage() {
 
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Initial Stock</label>
+                <label
+                  htmlFor="stock"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Initial Stock
+                </label>
                 <div className="mt-1">
                   <input
                     type="number"
@@ -189,7 +218,12 @@ function RestockPage() {
               </div>
 
               <div>
-                <label htmlFor="unit" className="block text-sm font-medium text-gray-700">Unit Type</label>
+                <label
+                  htmlFor="unit"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Unit Type
+                </label>
                 <div className="mt-1">
                   <select
                     name="unit"
@@ -207,15 +241,13 @@ function RestockPage() {
               </div>
             </div>
 
-            
-
             <div className="pt-4 flex justify-end">
               <button
                 type="submit"
                 disabled={loading}
                 className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
               >
-                {loading ? 'Restocking...' : 'Restock'}
+                {loading ? "Restocking..." : "Restock"}
               </button>
             </div>
           </form>

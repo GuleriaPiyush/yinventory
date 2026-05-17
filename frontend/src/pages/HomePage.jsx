@@ -20,7 +20,10 @@ const HomePage = () => {
     // 1. Fetch Inventory for Low Stock Warning
     const fetchInventory = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/inventory/');
+        const token = localStorage.getItem('token');
+        const res = await fetch('http://127.0.0.1:8000/api/inventory/', {
+          headers: { 'Authorization': `Token ${token}` }
+        });
         if (res.ok) {
           const data = await res.json();
           // Flag items as low stock if they have less than 10 units left
@@ -35,7 +38,10 @@ const HomePage = () => {
     // 2. Fetch Sales Graph Data (Falls back to mock data if it fails)
     const fetchSalesData = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/sales/graph/?filter=${timeFilter}`);
+        const token = localStorage.getItem('token');
+        const res = await fetch(`http://127.0.0.1:8000/api/sales/graph/?filter=${timeFilter}`, {
+          headers: { 'Authorization': `Token ${token}` }
+        });
         if (res.ok) {
           const data = await res.json();
           if (data) {

@@ -31,12 +31,14 @@ def LoginView(request):
     return Response({"error":"Invalid credentials"}, status=400)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def InventoryList(request):
     inventory = Product_Inventory.objects.all()
     serializer = ProductInventorySerializer(inventory, many=True)
     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def RestockProducts(request):
     data = request.data
     barcode = data.get('barcode')
@@ -85,6 +87,7 @@ def RestockProducts(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def AddnewProduct(request):
     data = request.data
     barcode = data.get('barcode')
@@ -104,6 +107,7 @@ def AddnewProduct(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def SearchProduct(request):
     """Searches for products by barcode or name"""
     query = request.GET.get('q','')
@@ -116,6 +120,7 @@ def SearchProduct(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def CreateSale(request):
     """Creates a Sale, saves Sale Items, and deducts stock from Inventory"""
     data = request.data
@@ -188,6 +193,7 @@ def CreateSale(request):
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def SalesGraphData(request):
     """Returns the total sales amount for the given filter (day, week, month)"""
     from django.db.models import Sum
