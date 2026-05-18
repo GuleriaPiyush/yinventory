@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from '../config';
+
 
 function RestockPage() {
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ function RestockPage() {
     try {
       // Assuming your backend routes are prefixed with /api/ in the main urls.py
       const response = await fetch(
-        "http://127.0.0.1:8000/api/inventory/create/",
+        `${API_BASE_URL}/api/inventory/create/`,
         {
           method: "POST",
           headers: {

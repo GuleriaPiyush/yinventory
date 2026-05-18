@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from '../config';
+
 
 const HomePage = () => {
   const [lowStockItems, setLowStockItems] = useState([]);
@@ -27,7 +29,7 @@ const HomePage = () => {
     const fetchInventory = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://127.0.0.1:8000/api/inventory/", {
+        const res = await fetch(`${API_BASE_URL}/api/inventory/`, {
           headers: { Authorization: `Token ${token}` },
         });
         if (res.ok) {
@@ -46,7 +48,7 @@ const HomePage = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `http://127.0.0.1:8000/api/sales/graph/?filter=${timeFilter}`,
+          `${API_BASE_URL}/api/sales/graph/?filter=${timeFilter}`,
           {
             headers: { Authorization: `Token ${token}` },
           },

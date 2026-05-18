@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from '../config';
 
 const SalesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +35,7 @@ const SalesPage = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(
-        `http://127.0.0.1:8000/api/inventory/search/?q=${value}`,
+        `${API_BASE_URL}/api/inventory/search/?q=${value}`,
         { headers: { 'Authorization': `Token ${token}` } }
       );
       const data = await res.json();
@@ -60,7 +61,7 @@ const SalesPage = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(
-        `http://127.0.0.1:8000/api/inventory/search/?q=${searchQuery}`,
+        `${API_BASE_URL}/api/inventory/search/?q=${searchQuery}`,
         { headers: { 'Authorization': `Token ${token}` } }
       );
       const data = await res.json();
@@ -158,7 +159,7 @@ const SalesPage = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch("http://127.0.0.1:8000/api/sales/create/", {
+      const response = await fetch(`${API_BASE_URL}/api/sales/create/`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

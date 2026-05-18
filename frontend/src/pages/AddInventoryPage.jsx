@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { API_BASE_URL } from '../config';
+
 
 const AddInventoryPage = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +29,7 @@ const AddInventoryPage = () => {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/inventory/add-new/",
+        `${API_BASE_URL}/api/inventory/add-new/`,
         {
           method: "POST",
           headers: {

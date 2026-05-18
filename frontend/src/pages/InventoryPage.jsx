@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
+
 
 function InventoryPage() {
   const [inventory, setInventory] = useState([]);
@@ -8,7 +10,7 @@ function InventoryPage() {
   useEffect(() => {
     // Fetch data from the Django backend
     const token = localStorage.getItem('token');
-    fetch('http://127.0.0.1:8000/api/inventory/', {
+    fetch(`${API_BASE_URL}/api/inventory/`, {
       headers: { 'Authorization': `Token ${token}` }
     })
       .then((response) => {
