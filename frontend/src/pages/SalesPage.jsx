@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const SalesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,6 +12,14 @@ const SalesPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  }
+
 
   // Handle typing in the search box (live search)
   const handleSearchChange = async (e) => {
@@ -264,6 +273,18 @@ const SalesPage = () => {
 
         {/* RIGHT COLUMN: Current Bill */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col h-full">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+            <div className="flex items-center gap-3">
+
+              <button 
+                onClick={handleLogout}
+                className="px-4 py-2  hover:bg-red-600 text-black font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2"
+              >
+                <span></span> Logout
+              </button>
+            </div>
+          </div>
           <h2 className="text-xl font-bold text-gray-800 mb-4">Current Bill</h2>
 
           {message.text && (
