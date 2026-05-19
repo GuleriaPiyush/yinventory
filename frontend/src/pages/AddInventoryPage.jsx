@@ -28,12 +28,14 @@ const AddInventoryPage = () => {
     setMessage({ type: "", text: "" });
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(
         `${API_BASE_URL}/api/inventory/add-new/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
           },
           body: JSON.stringify(formData),
         },

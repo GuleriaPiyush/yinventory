@@ -35,12 +35,14 @@ function RestockPage() {
 
     try {
       // Assuming your backend routes are prefixed with /api/ in the main urls.py
+      const token = localStorage.getItem('token');
       const response = await fetch(
         `${API_BASE_URL}/api/inventory/create/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
           },
           body: JSON.stringify(formData),
         },
