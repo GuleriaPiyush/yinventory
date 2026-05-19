@@ -128,8 +128,10 @@ items = [
 ]
 
 for item in items:
+    defaults = item.copy()
+    defaults.pop("barcode", None)
     Product_Inventory.objects.get_or_create(
         barcode=item["barcode"],
-        defaults=item
+        defaults=defaults
     )
 print(f"Successfully added {len(items)} Indian grocery items to the database!")

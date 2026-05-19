@@ -13,16 +13,7 @@ const HomePage = () => {
     navigate("/login");
   };
 
-  // Default mock data in case backend endpoint isn't created yet
-  const [salesData, setSalesData] = useState([
-    { name: "Mon", sales: 1200 },
-    { name: "Tue", sales: 3000 },
-    { name: "Wed", sales: 2000 },
-    { name: "Thu", sales: 2780 },
-    { name: "Fri", sales: 1890 },
-    { name: "Sat", sales: 2390 },
-    { name: "Sun", sales: 3490 },
-  ]);
+  const [salesData, setSalesData] = useState([]);
 
   useEffect(() => {
     // 1. Fetch Inventory for Low Stock Warning
@@ -43,7 +34,7 @@ const HomePage = () => {
       }
     };
 
-    // 2. Fetch Sales Graph Data (Falls back to mock data if it fails)
+    // 2. Fetch Sales Graph Data
     const fetchSalesData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -60,7 +51,7 @@ const HomePage = () => {
           }
         }
       } catch (err) {
-        console.log("Backend sales graph endpoint not found, using mock data.");
+        console.error("Failed to fetch sales graph data:", err);
       }
     };
 
