@@ -73,7 +73,7 @@ const HomePage = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Yinventory Logo" className="h-10 w-auto object-contain" />
+            {/* <img src="/logo.png" alt="Yinventory Logo" className="h-10 w-auto object-contain" /> */}
             <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
           </div>
           <div className="flex items-center gap-3">
