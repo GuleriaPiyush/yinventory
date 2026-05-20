@@ -23,7 +23,7 @@ const LoginPage = () => {
         const data = await res.json();
         localStorage.setItem("token", data.token); // Save token
         localStorage.setItem("username", username); // Save username
-        navigate("/"); // Redirect to dashboard
+        navigate("/dashboard"); // Redirect to dashboard
       } else {
         alert("Invalid credentials!");
       }

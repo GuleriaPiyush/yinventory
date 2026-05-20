@@ -5,6 +5,7 @@ import RestockPage from './pages/RestockPage';
 import AddInventoryPage from './pages/AddInventoryPage';
 import SalesPage from './pages/SalesPage';
 import LoginPage from './pages/LoginPage.jsx';
+import LandingPage from './pages/landingpage';
 
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('token');
@@ -19,7 +20,8 @@ function App() {
         <Route path="/inventory/add-new" element={<PrivateRoute><AddInventoryPage /></PrivateRoute>} />
         <Route path='/sales' element={<PrivateRoute><SalesPage /></PrivateRoute>} />
 
-        <Route path="/" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+        <Route path="/" element={<LandingPage />} />
 
 
         <Route path='/login' element={<LoginPage />} />
