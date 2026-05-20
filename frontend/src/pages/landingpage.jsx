@@ -37,8 +37,8 @@ const ScrollReveal = ({ children, delay = 0, className = "" }) => {
       ref={elementRef}
       style={{ transitionDelay: `${delay}ms` }}
       className={`transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${isVisible
-          ? "opacity-100 translate-y-0 scale-100 filter-none"
-          : "opacity-0 translate-y-12 scale-98 blur-[2px]"
+        ? "opacity-100 translate-y-0 scale-100 filter-none"
+        : "opacity-0 translate-y-12 scale-98 blur-[2px]"
         } ${className}`}
     >
       {children}
@@ -106,7 +106,7 @@ const LandingPage = () => {
     return errors;
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
@@ -114,10 +114,28 @@ const LandingPage = () => {
       return;
     }
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const response = await fetch("https://formspree.io/f/mojbepkn", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+      } else {
+        alert("Oops! There was a problem submitting your form. Please try again.");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      alert("Oops! There was a problem submitting your form. Please try again.");
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 1500);
+    }
   };
 
   return (
@@ -383,8 +401,8 @@ const LandingPage = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-shrink-0 text-left p-4 rounded-xl transition-all duration-300 outline-none w-[200px] lg:w-full cursor-pointer ${activeTab === tab.id
-                    ? "bg-white/5 border border-white/10 text-white shadow-lg"
-                    : "text-gray-400 hover:text-white hover:bg-white/2 border border-transparent"
+                  ? "bg-white/5 border border-white/10 text-white shadow-lg"
+                  : "text-gray-400 hover:text-white hover:bg-white/2 border border-transparent"
                   }`}
               >
                 <p className="font-bold text-sm mb-1">{tab.title}</p>
@@ -436,8 +454,8 @@ const LandingPage = () => {
                   onClick={handleSimulateScan}
                   disabled={barcodeScanned}
                   className={`w-full font-semibold px-6 py-3 rounded-xl transition-all cursor-pointer ${barcodeScanned
-                      ? "bg-indigo-600/30 text-indigo-300 border border-indigo-500/20 cursor-not-allowed"
-                      : "bg-white hover:bg-gray-100 text-black shadow-md shadow-white/5"
+                    ? "bg-indigo-600/30 text-indigo-300 border border-indigo-500/20 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-100 text-black shadow-md shadow-white/5"
                     }`}
                 >
                   {barcodeScanned ? "Scanning Barcode & Processing..." : "Simulate Barcode Scan"}
@@ -532,8 +550,8 @@ const LandingPage = () => {
                       onChange={handleInputChange}
                       placeholder="e.g., John Doe"
                       className={`bg-white/5 border text-sm rounded-xl p-3.5 focus:outline-none transition-all placeholder:text-gray-600 ${formErrors.name
-                          ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
-                          : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
+                        ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
+                        : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
                         }`}
                     />
                     {formErrors.name && <span className="text-[10px] text-red-400 font-semibold">{formErrors.name}</span>}
@@ -550,8 +568,8 @@ const LandingPage = () => {
                       onChange={handleInputChange}
                       placeholder="e.g., +91 9876543210"
                       className={`bg-white/5 border text-sm rounded-xl p-3.5 focus:outline-none transition-all placeholder:text-gray-600 ${formErrors.phone
-                          ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
-                          : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
+                        ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
+                        : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
                         }`}
                     />
                     {formErrors.phone && <span className="text-[10px] text-red-400 font-semibold">{formErrors.phone}</span>}
@@ -569,8 +587,8 @@ const LandingPage = () => {
                     onChange={handleInputChange}
                     placeholder="e.g., john@example.com"
                     className={`bg-white/5 border text-sm rounded-xl p-3.5 focus:outline-none transition-all placeholder:text-gray-600 ${formErrors.email
-                        ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
-                        : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
+                      ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
+                      : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
                       }`}
                   />
                   {formErrors.email && <span className="text-[10px] text-red-400 font-semibold">{formErrors.email}</span>}
