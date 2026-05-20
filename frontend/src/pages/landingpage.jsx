@@ -182,7 +182,7 @@ const LandingPage = () => {
 
         <ScrollReveal delay={100}>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-6">
-            Inventory management, <br className="hidden md:block" />
+            Inventory management & POS, <br className="hidden md:block" />
             <span className="bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">
               reimagined for efficiency.
             </span>
