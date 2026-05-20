@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from '../config';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 
 const LoginPage = () => {
+  useDocumentTitle("Login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();

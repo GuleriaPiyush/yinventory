@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from '../config';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 
 const HomePage = () => {
+  useDocumentTitle("Dashboard");
   const [lowStockItems, setLowStockItems] = useState([]);
   const [timeFilter, setTimeFilter] = useState("week");
   const navigate = useNavigate();

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 
 function InventoryPage() {
+  useDocumentTitle("Inventory");
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

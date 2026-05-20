@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { API_BASE_URL } from '../config';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 
 const AddInventoryPage = () => {
+  useDocumentTitle("Add Product");
   const [formData, setFormData] = useState({
     name: "",
     cost_price: "",

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from '../config';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 
 function RestockPage() {
+  useDocumentTitle("Restock");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

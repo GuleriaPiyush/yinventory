@@ -1,8 +1,10 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from '../config';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const SalesPage = () => {
+  useDocumentTitle("New Sale");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [billItems, setBillItems] = useState([]);
