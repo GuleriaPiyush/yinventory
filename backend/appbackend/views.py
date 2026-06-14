@@ -33,7 +33,7 @@ def LoginView(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def InventoryList(request):
-    inventory = Product_Inventory.objects.all()
+    inventory = Product_Inventory.objects.filter(user=request.user)
     serializer = ProductInventorySerializer(inventory, many=True)
     return Response(serializer.data)
 
@@ -46,7 +46,7 @@ def RestockProducts(request):
     # If barcode is provided, check if we need to update an existing product
     if barcode:
         try:
-            existing_product = Product_Inventory.objects.filter(barcode=barcode).first()
+            existing_product = Product_Inventory.objects.filter(user=request.user, barcode=barcode).first()
             
             if existing_product:
                 # Convert incoming values to Decimal for accurate math
@@ -91,18 +91,12 @@ def RestockProducts(request):
 def AddnewProduct(request):
     data = request.data
     barcode = data.get('barcode')
-    if Product_Inventory.objects.filter(barcode=barcode).exists():
+    if Product_Inventory.objects.filter(user=request.user, barcode=barcode).exists():
         return Response({"message":"barcode already exist go to restock page"}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        # serializer = ProductInventorySerializer(data=data)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
         serializer = ProductInventorySerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -111,7 +105,7 @@ def AddnewProduct(request):
 def SearchProduct(request):
     """Searches for products by barcode or name"""
     query = request.GET.get('q','')
-    products = Product_Inventory.objects.all()
+    products = Product_Inventory.objects.filter(user=request.user)
     if query:
         products = products.filter(Q(barcode__icontains=query) | Q(name__icontains=query))
         
@@ -143,6 +137,7 @@ def CreateSale(request):
             transaction_id = str(uuid.uuid4())[:12].upper()
             
             sale = Sales.objects.create(
+                user=request.user,
                 transaction_id=transaction_id,
                 customer_name=customer_name,
                 customer_phone=customer_phone,
@@ -155,7 +150,7 @@ def CreateSale(request):
             for item in items:
                 product_id = item.get('product_id')
                 # Get the product
-                product = Product_Inventory.objects.get(id=product_id)
+                product = Product_Inventory.objects.get(id=product_id, user=request.user)
 
                 quantity = Decimal(str(item.get('quantity')))
                 
@@ -209,7 +204,7 @@ def SalesGraphData(request):
     if filter_type == 'day':
         # Last 24 hours, grouped by hour
         start_time = now - timedelta(days=1)
-        items = Sale_Item.objects.filter(sales__created_at__gte=start_time) \
+        items = Sale_Item.objects.filter(sales__user=request.user, sales__created_at__gte=start_time) \
             .annotate(date=TruncHour('sales__created_at')) \
             .values('date') \
             .annotate(
@@ -227,7 +222,7 @@ def SalesGraphData(request):
             
     elif filter_type == 'month':
         # All time, grouped by month
-        items = Sale_Item.objects.annotate(date=TruncMonth('sales__created_at')) \
+        items = Sale_Item.objects.filter(sales__user=request.user).annotate(date=TruncMonth('sales__created_at')) \
             .values('date') \
             .annotate(
                 sales=Sum('subtotal'),
@@ -244,7 +239,7 @@ def SalesGraphData(request):
             
     elif filter_type == 'year':
         # All time, grouped by year
-        items = Sale_Item.objects.annotate(date=TruncYear('sales__created_at')) \
+        items = Sale_Item.objects.filter(sales__user=request.user).annotate(date=TruncYear('sales__created_at')) \
             .values('date') \
             .annotate(
                 sales=Sum('subtotal'),
@@ -262,7 +257,7 @@ def SalesGraphData(request):
     else: # default to week
         # Last 7 days, grouped by day
         start_time = now - timedelta(days=7)
-        items = Sale_Item.objects.filter(sales__created_at__gte=start_time) \
+        items = Sale_Item.objects.filter(sales__user=request.user, sales__created_at__gte=start_time) \
             .annotate(date=TruncDate('sales__created_at')) \
             .values('date') \
             .annotate(
