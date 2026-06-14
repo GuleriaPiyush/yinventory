@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
-// Reusable Apple-style Scroll Animation Wrapper
 const ScrollReveal = ({ children, delay = 0, className = "" }) => {
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
@@ -36,9 +35,9 @@ const ScrollReveal = ({ children, delay = 0, className = "" }) => {
     <div
       ref={elementRef}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${isVisible
-        ? "opacity-100 translate-y-0 scale-100 filter-none"
-        : "opacity-0 translate-y-12 scale-98 blur-[2px]"
+      className={`transition-all duration-700 ease-out ${isVisible
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 translate-y-6"
         } ${className}`}
     >
       {children}
@@ -48,9 +47,7 @@ const ScrollReveal = ({ children, delay = 0, className = "" }) => {
 
 const LandingPage = () => {
   useDocumentTitle("Smart Inventory Solutions");
-  const navigate = useNavigate();
 
-  // State for interactive features
   const [activeTab, setActiveTab] = useState("tracking");
   const [simulatedStock, setSimulatedStock] = useState([
     { name: "Wireless Earbuds", stock: 45, status: "Optimal" },
@@ -63,7 +60,6 @@ const LandingPage = () => {
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
   const [formErrors, setFormErrors] = useState({});
 
-  // Trigger simulated barcode scan
   const handleSimulateScan = () => {
     setBarcodeScanned(true);
     setTimeout(() => {
@@ -76,12 +72,10 @@ const LandingPage = () => {
     }, 1800);
   };
 
-  // Scroll to signup form
   const scrollToForm = () => {
     document.getElementById("signup-form")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Form submission handler
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -139,32 +133,31 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden">
-      {/* Background Decorative Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-violet-900/5 to-transparent pointer-events-none z-0" />
-      <div className="absolute top-[1200px] right-0 w-[500px] h-[500px] bg-violet-600/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-[2200px] left-0 w-[500px] h-[500px] bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none" />
+    <div className="relative min-h-screen bg-[#f8f8fa] text-gray-900 font-sans selection:bg-gray-200 selection:text-gray-900 overflow-x-hidden">
+      {/* Background layers */}
+      <div className="landing-gradient-mesh pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
+      <div className="landing-dot-grid pointer-events-none fixed inset-0 z-0 opacity-50" aria-hidden="true" />
 
-      {/* Sticky Premium Navbar */}
-      <nav className="sticky top-0 z-50 backdrop-blur-md bg-[#050505]/75 border-b border-white/5 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      {/* Navbar */}
+      <nav className="sticky top-0 z-50 bg-[#f8f8fa]/80 backdrop-blur-md border-b border-gray-200/80">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center">
-            <img src="/logo.png" alt="Yinventory Logo" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="Yinventory Logo" className="h-9 w-auto object-contain" />
           </div>
 
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
-            <button onClick={scrollToForm} className="hover:text-white transition-colors cursor-pointer">Features</button>
-            <a href="#ai-ml" className="hover:text-white transition-colors">AI Recommendations</a>
-            <a href="#demo" className="hover:text-white transition-colors">Interactive Demo</a>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
+            <button onClick={scrollToForm} className="hover:text-gray-900 transition-colors cursor-pointer">Features</button>
+            <a href="#ai-ml" className="hover:text-gray-900 transition-colors">AI Recommendations</a>
+            <a href="#demo" className="hover:text-gray-900 transition-colors">Interactive Demo</a>
           </div>
 
-          <div className="flex items-center gap-4">
-            <Link to="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5">
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-3 py-1.5">
               Sign In
             </Link>
             <button
               onClick={scrollToForm}
-              className="bg-white hover:bg-gray-100 text-black text-xs font-semibold px-4 py-2 rounded-full transition-all shadow-md shadow-white/5 cursor-pointer"
+              className="bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
             >
               Get It Now
             </button>
@@ -173,104 +166,98 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-20 text-center flex flex-col items-center">
+      <section className="relative z-10 max-w-6xl mx-auto px-6 pt-20 pb-16 text-center flex flex-col items-center">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[min(900px,100%)] h-[420px] bg-[radial-gradient(ellipse_at_center,_rgba(99,102,241,0.08)_0%,_transparent_70%)]" aria-hidden="true" />
         <ScrollReveal>
-          <span className="px-3.5 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 text-xs font-semibold tracking-wide uppercase mb-6 inline-block">
+          <span className="px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-600 text-xs font-medium tracking-wide uppercase mb-6 inline-block">
             Next Generation Inventory Control
           </span>
         </ScrollReveal>
 
         <ScrollReveal delay={100}>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-6">
+          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-tight mb-6 text-gray-900">
             Inventory management & POS, <br className="hidden md:block" />
-            <span className="bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">
-              reimagined for efficiency.
-            </span>
+            reimagined for efficiency.
           </h1>
         </ScrollReveal>
 
         <ScrollReveal delay={200}>
-          <p className="text-gray-400 text-base md:text-xl max-w-2xl mb-10 leading-relaxed">
+          <p className="text-gray-500 text-base md:text-lg max-w-2xl mb-10 leading-relaxed">
             Eliminate operational overhead with automated restock predictions, high-speed barcode actions, and predictive intelligence. Beautifully engineered to streamline your commerce workflow.
           </p>
         </ScrollReveal>
 
         <ScrollReveal delay={300}>
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
             <button
               onClick={scrollToForm}
-              className="w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white font-semibold px-8 py-3.5 rounded-full transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/35 cursor-pointer"
+              className="w-full sm:w-auto bg-gray-900 hover:bg-gray-800 text-white font-medium px-7 py-3 rounded-lg transition-colors cursor-pointer"
             >
               Secure Free Access
             </button>
             <button
               onClick={() => document.getElementById("demo")?.scrollIntoView({ behavior: "smooth" })}
-              className="w-full sm:w-auto border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold px-8 py-3.5 rounded-full transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 font-medium px-7 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
-              See Live Demo <span className="text-indigo-400">→</span>
+              See Live Demo <span className="text-gray-400">→</span>
             </button>
           </div>
         </ScrollReveal>
 
-        {/* Hero Interactive App Mockup */}
-        <ScrollReveal delay={400} className="w-full mt-20 max-w-5xl">
-          <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-[#0F0F13] to-[#050505] p-2 shadow-2xl shadow-indigo-500/5">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 opacity-30 rounded-2xl blur-xl pointer-events-none" />
-            <div className="rounded-xl border border-white/5 bg-[#08080C] overflow-hidden p-6 text-left">
-              {/* Header */}
-              <div className="flex items-center justify-between pb-6 border-b border-white/5">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/60" />
+        {/* Hero App Mockup */}
+        <ScrollReveal delay={400} className="w-full mt-16 max-w-4xl">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-1 shadow-sm">
+            <div className="rounded-lg border border-gray-200 bg-white overflow-hidden p-5 text-left">
+              <div className="flex items-center justify-between pb-5 border-b border-gray-100">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-300" />
                 </div>
-                <div className="text-xs text-gray-500 bg-white/5 px-4 py-1 rounded-md border border-white/5 font-mono">
+                <div className="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded border border-gray-200 font-mono">
                   demo.yinventory.app
                 </div>
                 <div className="w-6" />
               </div>
 
-              {/* Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
-                <div className="lg:col-span-2 space-y-6">
-                  {/* Sales Graph Mockup */}
-                  <div className="bg-white/3 border border-white/5 rounded-xl p-5">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 pt-5">
+                <div className="lg:col-span-2">
+                  <div className="border border-gray-200 rounded-lg p-4 bg-white">
                     <div className="flex justify-between items-center mb-4">
                       <div>
-                        <h4 className="text-sm font-semibold text-white">Live Demand & Sales Analytics</h4>
-                        <p className="text-xs text-gray-500">Hourly projections</p>
+                        <h4 className="text-sm font-medium text-gray-900">Live Demand & Sales Analytics</h4>
+                        <p className="text-xs text-gray-400">Hourly projections</p>
                       </div>
-                      <span className="text-xs bg-indigo-500/10 text-indigo-400 font-semibold px-2.5 py-1 rounded-full border border-indigo-500/20">
+                      <span className="text-xs bg-gray-100 text-gray-600 font-medium px-2 py-0.5 rounded border border-gray-200">
                         +28.4% growth
                       </span>
                     </div>
-                    <div className="h-40 flex items-end gap-3 pt-6 border-b border-white/5">
-                      <div className="flex-1 bg-white/5 rounded-t h-[20%] transition-all hover:bg-indigo-500/40" />
-                      <div className="flex-1 bg-white/5 rounded-t h-[40%] transition-all hover:bg-indigo-500/40" />
-                      <div className="flex-1 bg-white/5 rounded-t h-[35%] transition-all hover:bg-indigo-500/40" />
-                      <div className="flex-1 bg-white/10 rounded-t h-[65%] transition-all hover:bg-indigo-500/40" />
-                      <div className="flex-1 bg-indigo-500/80 rounded-t h-[85%] animate-pulse" />
+                    <div className="h-36 flex items-end gap-2 pt-4 border-b border-gray-100">
+                      <div className="flex-1 bg-gray-100 rounded-t h-[20%]" />
+                      <div className="flex-1 bg-gray-100 rounded-t h-[40%]" />
+                      <div className="flex-1 bg-gray-100 rounded-t h-[35%]" />
+                      <div className="flex-1 bg-gray-200 rounded-t h-[65%]" />
+                      <div className="flex-1 bg-gray-900 rounded-t h-[85%]" />
                     </div>
                   </div>
                 </div>
 
-                {/* Real-time Alerts Mockup */}
-                <div className="bg-white/3 border border-white/5 rounded-xl p-5 space-y-4">
-                  <h4 className="text-sm font-semibold text-white">Dynamic Stock Operations</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 border border-red-500/20 bg-red-500/5 rounded-lg">
+                <div className="border border-gray-200 rounded-lg p-4 bg-white space-y-3">
+                  <h4 className="text-sm font-medium text-gray-900">Dynamic Stock Operations</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-3 border border-red-100 bg-red-50 rounded-lg">
                       <div>
-                        <p className="font-semibold text-white text-xs">Smart Watch S4</p>
-                        <p className="text-[10px] text-gray-500">Barcode: #9310</p>
+                        <p className="font-medium text-gray-900 text-xs">Smart Watch S4</p>
+                        <p className="text-[10px] text-gray-400">Barcode: #9310</p>
                       </div>
-                      <span className="text-xs font-bold text-red-400">8 Units Left</span>
+                      <span className="text-xs font-medium text-red-600">8 Units Left</span>
                     </div>
-                    <div className="flex justify-between items-center p-3 border border-emerald-500/20 bg-emerald-500/5 rounded-lg">
+                    <div className="flex justify-between items-center p-3 border border-green-100 bg-green-50 rounded-lg">
                       <div>
-                        <p className="font-semibold text-white text-xs">Wireless Earbuds</p>
-                        <p className="text-[10px] text-gray-500">Barcode: #4041</p>
+                        <p className="font-medium text-gray-900 text-xs">Wireless Earbuds</p>
+                        <p className="text-[10px] text-gray-400">Barcode: #4041</p>
                       </div>
-                      <span className="text-xs font-bold text-emerald-400">Optimal</span>
+                      <span className="text-xs font-medium text-green-600">Optimal</span>
                     </div>
                   </div>
                 </div>
@@ -280,96 +267,91 @@ const LandingPage = () => {
         </ScrollReveal>
       </section>
 
-      {/* Brand values / Core stats */}
-      <section className="border-y border-white/5 bg-[#08080C]/40 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+      {/* Core stats */}
+      <section className="relative z-10 border-y border-gray-200/80 bg-white/50 backdrop-blur-sm py-14">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
           <ScrollReveal>
-            <h3 className="text-4xl font-extrabold text-white mb-2">99.9%</h3>
-            <p className="text-sm text-gray-400">Inventory Sync Accuracy</p>
+            <h3 className="text-3xl font-semibold text-gray-900 mb-1">99.9%</h3>
+            <p className="text-sm text-gray-500">Inventory Sync Accuracy</p>
           </ScrollReveal>
           <ScrollReveal delay={100}>
-            <h3 className="text-4xl font-extrabold text-white mb-2">&lt; 2s</h3>
-            <p className="text-sm text-gray-400">Barcode Scan & Record Time</p>
+            <h3 className="text-3xl font-semibold text-gray-900 mb-1">&lt; 2s</h3>
+            <p className="text-sm text-gray-500">Barcode Scan & Record Time</p>
           </ScrollReveal>
           <ScrollReveal delay={200}>
-            <h3 className="text-4xl font-extrabold text-white mb-2">15hr+</h3>
-            <p className="text-sm text-gray-400">Operational Time Saved Weekly</p>
+            <h3 className="text-3xl font-semibold text-gray-900 mb-1">15hr+</h3>
+            <p className="text-sm text-gray-500">Operational Time Saved Weekly</p>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* AI/ML Predictive Intelligence Feature Section */}
-      <section id="ai-ml" className="max-w-7xl mx-auto px-6 py-28 relative">
-        <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none" />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      {/* AI/ML Feature Section */}
+      <section id="ai-ml" className="relative z-10 max-w-6xl mx-auto px-6 py-24">
+        <div className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 w-[420px] h-[420px] bg-[radial-gradient(circle,_rgba(168,85,247,0.06)_0%,_transparent_70%)]" aria-hidden="true" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
           <ScrollReveal>
-            <span className="px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 text-xs font-semibold tracking-wider uppercase mb-6 inline-block">
+            <span className="px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-600 text-xs font-medium tracking-wider uppercase mb-5 inline-block">
               Machine Learning Powered
             </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-6">
-              Personalized Customer Suggestions, <br className="text-indigo-400" />
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight mb-5">
+              Personalized Customer Suggestions, <br />
               automatically compiled.
             </h2>
-            <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-8">
+            <p className="text-gray-500 text-base leading-relaxed mb-7">
               Yinventory integrates advanced AI/ML algorithms directly into your product workflows. It constantly analyzes historic client buying trends, restock speed, and product frequencies to generate **personalized dynamic product recommendations** tailored to your customers.
             </p>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               {[
                 "Increase customer retention with personalized smart offers.",
                 "Automated demand-spike predictions to prevent stockouts.",
                 "Intelligent suggestions integrated directly on your checkout dashboard."
               ].map((benefit, idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <span className="h-5 w-5 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xs text-indigo-400 mt-0.5">✓</span>
-                  <span className="text-sm text-gray-300">{benefit}</span>
+                  <span className="h-5 w-5 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xs text-gray-600 mt-0.5">✓</span>
+                  <span className="text-sm text-gray-600">{benefit}</span>
                 </li>
               ))}
             </ul>
           </ScrollReveal>
 
-          {/* AI/ML Dynamic Forecast simulator */}
-          <ScrollReveal delay={200} className="relative">
-            <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-tr from-[#0F0F1A] via-[#070712] to-[#0A0718] p-6 shadow-xl shadow-indigo-500/10 overflow-hidden relative group">
-              <div className="absolute -top-10 -right-10 w-44 h-44 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none transition-all group-hover:scale-150 duration-700" />
-
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-9 w-9 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center">
-                  <span className="text-lg">✨</span>
+          <ScrollReveal delay={200}>
+            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-8 w-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                  <span className="text-base">✨</span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-white text-sm">Yinventory AI Recommendation Engine</h4>
-                  <p className="text-[10px] text-gray-500">Live active pipeline</p>
+                  <h4 className="font-medium text-gray-900 text-sm">Yinventory AI Recommendation Engine</h4>
+                  <p className="text-[10px] text-gray-400">Live active pipeline</p>
                 </div>
               </div>
 
-              {/* Simulated Predictions */}
-              <div className="space-y-4">
-                <div className="bg-white/2 border border-white/5 rounded-xl p-4 transition-all hover:bg-white/5">
+              <div className="space-y-3">
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-semibold text-indigo-300">DEMAND SPIKE FORECAST</span>
-                    <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-mono font-bold border border-indigo-500/30">94% Confidence</span>
+                    <span className="text-xs font-medium text-gray-500">DEMAND SPIKE FORECAST</span>
+                    <span className="text-[10px] bg-white text-gray-600 px-2 py-0.5 rounded border border-gray-200 font-mono">94% Confidence</span>
                   </div>
-                  <p className="text-xs text-gray-300 leading-relaxed">
-                    Personalized suggestion for <strong className="text-white">Premium Coffee Beans</strong> is spiking. Demand will increase by <strong className="text-emerald-400">42% this weekend</strong>.
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Personalized suggestion for <strong className="text-gray-900">Premium Coffee Beans</strong> is spiking. Demand will increase by <strong className="text-green-600">42% this weekend</strong>.
                   </p>
-                  <div className="mt-3 text-[10px] text-gray-500 border-t border-white/5 pt-2 flex justify-between items-center">
+                  <div className="mt-3 text-[10px] text-gray-400 border-t border-gray-200 pt-2 flex justify-between items-center">
                     <span>Suggested Action: Increase stock +25 units</span>
-                    <span className="text-indigo-400 font-semibold cursor-pointer hover:underline">Apply Action</span>
+                    <span className="text-gray-700 font-medium cursor-pointer hover:underline">Apply Action</span>
                   </div>
                 </div>
 
-                <div className="bg-white/2 border border-white/5 rounded-xl p-4 transition-all hover:bg-white/5">
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-semibold text-indigo-300">CROSS-SELL SUGGESTION</span>
-                    <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-mono font-bold border border-indigo-500/30">89% Correlation</span>
+                    <span className="text-xs font-medium text-gray-500">CROSS-SELL SUGGESTION</span>
+                    <span className="text-[10px] bg-white text-gray-600 px-2 py-0.5 rounded border border-gray-200 font-mono">89% Correlation</span>
                   </div>
-                  <p className="text-xs text-gray-300 leading-relaxed">
-                    Customers who purchase <strong className="text-white">Smart Watch S4</strong> are high-probability buyers for <strong className="text-white">Fast Charger Cables</strong>.
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Customers who purchase <strong className="text-gray-900">Smart Watch S4</strong> are high-probability buyers for <strong className="text-gray-900">Fast Charger Cables</strong>.
                   </p>
-                  <div className="mt-3 text-[10px] text-gray-500 border-t border-white/5 pt-2 flex justify-between items-center">
+                  <div className="mt-3 text-[10px] text-gray-400 border-t border-gray-200 pt-2 flex justify-between items-center">
                     <span>Suggested Bundle Discount: 12% off set</span>
-                    <span className="text-indigo-400 font-semibold cursor-pointer hover:underline">Create Bundle</span>
+                    <span className="text-gray-700 font-medium cursor-pointer hover:underline">Create Bundle</span>
                   </div>
                 </div>
               </div>
@@ -378,20 +360,21 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Core Features Apple-Style Scrolling Showcase */}
-      <section id="demo" className="max-w-7xl mx-auto px-6 py-28 border-t border-white/5">
-        <ScrollReveal className="text-center max-w-2xl mx-auto mb-20">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+      {/* Interactive Demo */}
+      <section id="demo" className="relative z-10 max-w-6xl mx-auto px-6 py-24 border-t border-gray-200/80">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-indigo-50/40 via-transparent to-blue-50/30" aria-hidden="true" />
+        <div className="relative">
+        <ScrollReveal className="text-center max-w-2xl mx-auto mb-16">
+          <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight mb-3">
             Engineered with absolute precision.
           </h2>
-          <p className="text-gray-400 text-sm md:text-base">
+          <p className="text-gray-500 text-sm md:text-base">
             Click through our interactive simulator below to experience the responsive feel of Yinventory.
           </p>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Menu Selector */}
-          <div className="lg:col-span-4 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 border-b lg:border-b-0 lg:border-l border-white/5 pb-4 lg:pb-0 lg:pl-4 scrollbar-none">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-4 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 border-b lg:border-b-0 lg:border-l border-gray-200 pb-4 lg:pb-0 lg:pl-4">
             {[
               { id: "tracking", title: "📦 Stock Tracking", desc: "Interactive inventory monitoring." },
               { id: "scanning", title: "⚡ Barcode Scanner", desc: "Rapid stock updates with barcode simulation." },
@@ -400,37 +383,34 @@ const LandingPage = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-shrink-0 text-left p-4 rounded-xl transition-all duration-300 outline-none w-[200px] lg:w-full cursor-pointer ${activeTab === tab.id
-                  ? "bg-white/5 border border-white/10 text-white shadow-lg"
-                  : "text-gray-400 hover:text-white hover:bg-white/2 border border-transparent"
+                className={`flex-shrink-0 text-left p-4 rounded-lg transition-colors outline-none w-[200px] lg:w-full cursor-pointer ${activeTab === tab.id
+                  ? "bg-gray-100 border border-gray-200 text-gray-900"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50 border border-transparent"
                   }`}
               >
-                <p className="font-bold text-sm mb-1">{tab.title}</p>
-                <p className="text-xs text-gray-500 line-clamp-1">{tab.desc}</p>
+                <p className="font-medium text-sm mb-0.5">{tab.title}</p>
+                <p className="text-xs text-gray-400 line-clamp-1">{tab.desc}</p>
               </button>
             ))}
           </div>
 
-          {/* Interactive Screen Display */}
-          <div className="lg:col-span-8 bg-white/2 border border-white/5 rounded-2xl p-6 min-h-[360px] flex flex-col justify-center shadow-inner relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 blur-3xl pointer-events-none" />
-
+          <div className="lg:col-span-8 border border-gray-200 rounded-xl p-5 min-h-[360px] flex flex-col justify-center bg-white">
             {activeTab === "tracking" && (
-              <ScrollReveal className="space-y-6">
+              <ScrollReveal className="space-y-5">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-white text-lg">Real-Time Stock Monitoring</h3>
-                  <span className="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full animate-pulse font-mono">Live</span>
+                  <h3 className="font-medium text-gray-900 text-lg">Real-Time Stock Monitoring</h3>
+                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded font-mono">Live</span>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {simulatedStock.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center p-3.5 bg-white/3 border border-white/5 rounded-xl transition-all hover:bg-white/5">
+                    <div key={idx} className="flex justify-between items-center p-3 border border-gray-200 rounded-lg bg-gray-50">
                       <div>
-                        <p className="font-semibold text-white text-sm">{item.name}</p>
-                        <p className="text-[10px] text-gray-500">Auto-synced just now</p>
+                        <p className="font-medium text-gray-900 text-sm">{item.name}</p>
+                        <p className="text-[10px] text-gray-400">Auto-synced just now</p>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-bold text-white block">{item.stock} Units</span>
-                        <span className={`text-[10px] font-semibold ${item.status === "Low Stock" ? "text-red-400" : "text-emerald-400"
+                        <span className="text-sm font-medium text-gray-900 block">{item.stock} Units</span>
+                        <span className={`text-[10px] font-medium ${item.status === "Low Stock" ? "text-red-600" : "text-green-600"
                           }`}>{item.status}</span>
                       </div>
                     </div>
@@ -440,41 +420,41 @@ const LandingPage = () => {
             )}
 
             {activeTab === "scanning" && (
-              <ScrollReveal className="text-center space-y-6 max-w-md mx-auto">
-                <div className="h-20 w-20 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center mx-auto text-3xl animate-bounce">
+              <ScrollReveal className="text-center space-y-5 max-w-md mx-auto">
+                <div className="h-16 w-16 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center mx-auto text-2xl">
                   🏷️
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg mb-2">Simulated Barcode Scan</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    Click the button below to simulate scanning a barcode for <strong className="text-white">Smart Watch S4</strong>. It will instantly restock the item automatically.
+                  <h3 className="font-medium text-gray-900 text-lg mb-2">Simulated Barcode Scan</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Click the button below to simulate scanning a barcode for <strong className="text-gray-900">Smart Watch S4</strong>. It will instantly restock the item automatically.
                   </p>
                 </div>
                 <button
                   onClick={handleSimulateScan}
                   disabled={barcodeScanned}
-                  className={`w-full font-semibold px-6 py-3 rounded-xl transition-all cursor-pointer ${barcodeScanned
-                    ? "bg-indigo-600/30 text-indigo-300 border border-indigo-500/20 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-100 text-black shadow-md shadow-white/5"
+                  className={`w-full font-medium px-6 py-3 rounded-lg transition-colors cursor-pointer ${barcodeScanned
+                    ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
+                    : "bg-gray-900 hover:bg-gray-800 text-white"
                     }`}
                 >
                   {barcodeScanned ? "Scanning Barcode & Processing..." : "Simulate Barcode Scan"}
                 </button>
                 {barcodeScanned && (
-                  <p className="text-xs text-indigo-400 font-semibold animate-pulse">
-                    ⚡ Signal captured. Sending API payload to secure servers...
+                  <p className="text-xs text-gray-500 font-medium">
+                    Signal captured. Sending API payload to secure servers...
                   </p>
                 )}
               </ScrollReveal>
             )}
 
             {activeTab === "analytics" && (
-              <ScrollReveal className="space-y-6">
+              <ScrollReveal className="space-y-5">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-white text-lg">Sales Metrics Overview</h3>
-                  <span className="text-[10px] bg-white/5 border border-white/5 text-gray-400 px-3 py-1 rounded-full font-mono">Filter: Weekly</span>
+                  <h3 className="font-medium text-gray-900 text-lg">Sales Metrics Overview</h3>
+                  <span className="text-[10px] bg-gray-50 border border-gray-200 text-gray-500 px-3 py-1 rounded font-mono">Filter: Weekly</span>
                 </div>
-                <div className="h-44 flex items-end justify-between gap-3 pt-6 border-b border-white/5 relative">
+                <div className="h-44 flex items-end justify-between gap-2 pt-4 border-b border-gray-100">
                   {[
                     { day: "Mon", sales: 45 },
                     { day: "Tue", sales: 78 },
@@ -484,13 +464,13 @@ const LandingPage = () => {
                     { day: "Sat", sales: 154 },
                     { day: "Sun", sales: 110 }
                   ].map((d, index) => (
-                    <div key={index} className="flex-1 flex flex-col items-center h-full justify-end group">
-                      <div className="h-full bg-gradient-to-t from-indigo-500/80 to-violet-600/80 rounded-t-md w-full max-w-[28px] transition-all hover:opacity-90 duration-500" style={{ height: `${(d.sales / 160) * 100}%` }} />
-                      <span className="text-[10px] text-gray-500 mt-2">{d.day}</span>
+                    <div key={index} className="flex-1 flex flex-col items-center h-full justify-end">
+                      <div className="bg-gray-900 rounded-t w-full max-w-[24px]" style={{ height: `${(d.sales / 160) * 100}%` }} />
+                      <span className="text-[10px] text-gray-400 mt-2">{d.day}</span>
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-between items-center text-xs text-gray-500">
+                <div className="flex justify-between items-center text-xs text-gray-400">
                   <span>Peak Sales: Friday/Saturday</span>
                   <span>Total Weekly revenue: Rs. 66,700.00</span>
                 </div>
@@ -498,32 +478,32 @@ const LandingPage = () => {
             )}
           </div>
         </div>
+        </div>
       </section>
 
-      {/* Contact Form Section */}
-      <section id="signup-form" className="relative z-10 max-w-4xl mx-auto px-6 py-28 border-t border-white/5">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-indigo-500/5 blur-[90px] rounded-full pointer-events-none" />
-
-        <ScrollReveal className="text-center max-w-xl mx-auto mb-14">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+      {/* Contact Form */}
+      <section id="signup-form" className="relative z-10 max-w-3xl mx-auto px-6 py-24 border-t border-gray-200/80">
+        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[radial-gradient(circle,_rgba(99,102,241,0.06)_0%,_transparent_70%)]" aria-hidden="true" />
+        <ScrollReveal className="text-center max-w-xl mx-auto mb-12 relative">
+          <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight mb-3">
             Get early access today.
           </h2>
-          <p className="text-gray-400 text-sm md:text-base">
+          <p className="text-gray-500 text-sm md:text-base">
             No credit card required. Experience streamlined cloud tracking and AI features for your business.
           </p>
         </ScrollReveal>
 
         <ScrollReveal delay={100} className="relative">
-          <div className="backdrop-blur-md bg-white/3 border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+          <div className="border border-gray-200 rounded-2xl p-8 md:p-10 bg-white/80 backdrop-blur-sm shadow-sm shadow-gray-200/50">
             {isSubmitted ? (
-              <div className="text-center py-12 space-y-6 animate-fade-in">
-                <div className="h-16 w-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-4xl rounded-full flex items-center justify-center mx-auto animate-bounce">
+              <div className="text-center py-10 space-y-5">
+                <div className="h-14 w-14 bg-green-50 border border-green-200 text-green-600 text-3xl rounded-full flex items-center justify-center mx-auto">
                   ✓
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-white">Your access has been secured!</h3>
-                  <p className="text-gray-400 text-sm max-w-sm mx-auto leading-relaxed">
-                    Thank you, <strong className="text-white">{formData.name}</strong>. An invitation link and onboarding guide have been dispatched to <strong className="text-white">{formData.email}</strong>.
+                  <h3 className="text-xl font-semibold text-gray-900">Your access has been secured!</h3>
+                  <p className="text-gray-500 text-sm max-w-sm mx-auto leading-relaxed">
+                    Thank you, <strong className="text-gray-900">{formData.name}</strong>. An invitation link and onboarding guide have been dispatched to <strong className="text-gray-900">{formData.email}</strong>.
                   </p>
                 </div>
                 <button
@@ -531,17 +511,16 @@ const LandingPage = () => {
                     setIsSubmitted(false);
                     setFormData({ name: "", email: "", phone: "" });
                   }}
-                  className="text-xs text-indigo-400 font-semibold hover:underline cursor-pointer"
+                  className="text-xs text-gray-600 font-medium hover:underline cursor-pointer"
                 >
                   Submit another request
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Name field */}
-                  <div className="flex flex-col space-y-2 text-left">
-                    <label htmlFor="name" className="text-xs font-semibold tracking-wide text-gray-400 uppercase">Your Name</label>
+              <form onSubmit={handleFormSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="flex flex-col space-y-1.5 text-left">
+                    <label htmlFor="name" className="text-xs font-medium tracking-wide text-gray-500 uppercase">Your Name</label>
                     <input
                       type="text"
                       id="name"
@@ -549,17 +528,16 @@ const LandingPage = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="e.g., John Doe"
-                      className={`bg-white/5 border text-sm rounded-xl p-3.5 focus:outline-none transition-all placeholder:text-gray-600 ${formErrors.name
-                        ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
-                        : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
+                      className={`bg-white border text-sm rounded-lg p-3 focus:outline-none transition-colors placeholder:text-gray-400 ${formErrors.name
+                        ? "border-red-300 focus:border-red-400 focus:ring-1 focus:ring-red-200"
+                        : "border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-200"
                         }`}
                     />
-                    {formErrors.name && <span className="text-[10px] text-red-400 font-semibold">{formErrors.name}</span>}
+                    {formErrors.name && <span className="text-[10px] text-red-500 font-medium">{formErrors.name}</span>}
                   </div>
 
-                  {/* Phone field */}
-                  <div className="flex flex-col space-y-2 text-left">
-                    <label htmlFor="phone" className="text-xs font-semibold tracking-wide text-gray-400 uppercase">Phone Number</label>
+                  <div className="flex flex-col space-y-1.5 text-left">
+                    <label htmlFor="phone" className="text-xs font-medium tracking-wide text-gray-500 uppercase">Phone Number</label>
                     <input
                       type="tel"
                       id="phone"
@@ -567,18 +545,17 @@ const LandingPage = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="e.g., +91 9876543210"
-                      className={`bg-white/5 border text-sm rounded-xl p-3.5 focus:outline-none transition-all placeholder:text-gray-600 ${formErrors.phone
-                        ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
-                        : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
+                      className={`bg-white border text-sm rounded-lg p-3 focus:outline-none transition-colors placeholder:text-gray-400 ${formErrors.phone
+                        ? "border-red-300 focus:border-red-400 focus:ring-1 focus:ring-red-200"
+                        : "border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-200"
                         }`}
                     />
-                    {formErrors.phone && <span className="text-[10px] text-red-400 font-semibold">{formErrors.phone}</span>}
+                    {formErrors.phone && <span className="text-[10px] text-red-500 font-medium">{formErrors.phone}</span>}
                   </div>
                 </div>
 
-                {/* Email field */}
-                <div className="flex flex-col space-y-2 text-left">
-                  <label htmlFor="email" className="text-xs font-semibold tracking-wide text-gray-400 uppercase">Email Address</label>
+                <div className="flex flex-col space-y-1.5 text-left">
+                  <label htmlFor="email" className="text-xs font-medium tracking-wide text-gray-500 uppercase">Email Address</label>
                   <input
                     type="email"
                     id="email"
@@ -586,23 +563,22 @@ const LandingPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="e.g., john@example.com"
-                    className={`bg-white/5 border text-sm rounded-xl p-3.5 focus:outline-none transition-all placeholder:text-gray-600 ${formErrors.email
-                      ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50"
-                      : "border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
+                    className={`bg-white border text-sm rounded-lg p-3 focus:outline-none transition-colors placeholder:text-gray-400 ${formErrors.email
+                      ? "border-red-300 focus:border-red-400 focus:ring-1 focus:ring-red-200"
+                      : "border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-200"
                       }`}
                   />
-                  {formErrors.email && <span className="text-[10px] text-red-400 font-semibold">{formErrors.email}</span>}
+                  {formErrors.email && <span className="text-[10px] text-red-500 font-medium">{formErrors.email}</span>}
                 </div>
 
-                {/* Submit button */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-white hover:bg-gray-100 text-black font-semibold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-gray-600 disabled:text-gray-400"
+                  className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3.5 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:bg-gray-300 disabled:text-gray-500"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       Securing Your Access...
                     </>
                   ) : (
@@ -616,8 +592,8 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-12 text-center text-xs text-gray-500 relative z-10">
-        <p className="mb-2">© {new Date().getFullYear()} Yinventory. All rights reserved.</p>
+      <footer className="relative z-10 border-t border-gray-200/80 bg-white/40 backdrop-blur-sm py-10 text-center text-xs text-gray-400">
+        <p className="mb-1">© {new Date().getFullYear()} Yinventory. All rights reserved.</p>
         <p>Engineered for speed, built with absolute privacy.</p>
       </footer>
     </div>
