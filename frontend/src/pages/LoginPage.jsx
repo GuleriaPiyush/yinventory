@@ -40,7 +40,50 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 bg-[#f8f8fa] text-gray-900 font-sans selection:bg-gray-200 selection:text-gray-900 overflow-hidden">
+    <>
+      <style>{`
+        .landing-dot-grid {
+          background-image: radial-gradient(circle, #d4d4d8 1px, transparent 1px);
+          background-size: 28px 28px;
+          mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+        }
+        
+        .landing-gradient-mesh {
+          background-image:
+            radial-gradient(ellipse 70% 50% at 15% 0%, rgba(99, 102, 241, 0.07), transparent 55%),
+            radial-gradient(ellipse 55% 45% at 85% 8%, rgba(168, 85, 247, 0.05), transparent 50%),
+            radial-gradient(ellipse 60% 40% at 50% 100%, rgba(59, 130, 246, 0.04), transparent 55%);
+        }
+        
+        .landing-btn-primary {
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        
+        .landing-btn-primary:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 24px -8px rgba(17, 24, 39, 0.4);
+        }
+        
+        .landing-btn-primary:active:not(:disabled) {
+          transform: translateY(0);
+          box-shadow: none;
+        }
+        
+        .landing-btn-primary:disabled:hover {
+          transform: none;
+          box-shadow: none;
+        }
+        
+        .landing-logo {
+          transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+        
+        .landing-logo:hover {
+          transform: scale(1.05);
+          opacity: 0.85;
+        }
+      `}</style>
+      <div className="relative min-h-screen flex items-center justify-center p-4 bg-[#f8f8fa] text-gray-900 font-sans selection:bg-gray-200 selection:text-gray-900 overflow-hidden">
       {/* Background layers */}
       <div className="landing-gradient-mesh pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
       <div className="landing-dot-grid pointer-events-none fixed inset-0 z-0 opacity-50" aria-hidden="true" />
@@ -187,6 +230,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
