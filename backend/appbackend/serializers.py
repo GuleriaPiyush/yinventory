@@ -5,6 +5,7 @@ class ProductInventorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Product_Inventory
         fields = '__all__'
+        read_only_fields = ['user']
 
 class SaleItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,3 +19,4 @@ class SalesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sales
         fields = '__all__'
+        read_only_fields = ['user']
