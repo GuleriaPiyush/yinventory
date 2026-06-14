@@ -142,22 +142,22 @@ const LandingPage = () => {
       <nav className="sticky top-0 z-50 bg-[#f8f8fa]/80 backdrop-blur-md border-b border-gray-200/80">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center">
-            <img src="/logo.png" alt="Yinventory Logo" className="h-9 w-auto object-contain" />
+            <img src="/logo.png" alt="Yinventory Logo" className="landing-logo h-9 w-auto object-contain cursor-pointer" />
           </div>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
-            <button onClick={scrollToForm} className="hover:text-gray-900 transition-colors cursor-pointer">Features</button>
-            <a href="#ai-ml" className="hover:text-gray-900 transition-colors">AI Recommendations</a>
-            <a href="#demo" className="hover:text-gray-900 transition-colors">Interactive Demo</a>
+            <button onClick={scrollToForm} className="landing-nav-link hover:text-gray-900 cursor-pointer">Features</button>
+            <a href="#ai-ml" className="landing-nav-link hover:text-gray-900">AI Recommendations</a>
+            <a href="#demo" className="landing-nav-link hover:text-gray-900">Interactive Demo</a>
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-3 py-1.5">
+            <Link to="/login" className="landing-nav-link text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-1.5">
               Sign In
             </Link>
             <button
               onClick={scrollToForm}
-              className="bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
+              className="landing-btn-primary bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium px-4 py-2 rounded-lg cursor-pointer"
             >
               Get It Now
             </button>
@@ -170,7 +170,7 @@ const LandingPage = () => {
         <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[min(900px,100%)] h-[420px] bg-[radial-gradient(ellipse_at_center,_rgba(99,102,241,0.08)_0%,_transparent_70%)]" aria-hidden="true" />
         <ScrollReveal>
           <span className="px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-600 text-xs font-medium tracking-wide uppercase mb-6 inline-block">
-            Next Generation Inventory Control
+            Future of Inventory Management
           </span>
         </ScrollReveal>
 
@@ -191,22 +191,22 @@ const LandingPage = () => {
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
             <button
               onClick={scrollToForm}
-              className="w-full sm:w-auto bg-gray-900 hover:bg-gray-800 text-white font-medium px-7 py-3 rounded-lg transition-colors cursor-pointer"
+              className="landing-btn-primary w-full sm:w-auto bg-gray-900 hover:bg-gray-800 text-white font-medium px-7 py-3 rounded-lg cursor-pointer"
             >
               Secure Free Access
             </button>
             <button
               onClick={() => document.getElementById("demo")?.scrollIntoView({ behavior: "smooth" })}
-              className="w-full sm:w-auto border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 font-medium px-7 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="landing-btn-secondary w-full sm:w-auto border border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 font-medium px-7 py-3 rounded-lg flex items-center justify-center gap-2"
             >
-              See Live Demo <span className="text-gray-400">→</span>
+              See Live Demo <span className="landing-arrow text-gray-400">→</span>
             </button>
           </div>
         </ScrollReveal>
 
         {/* Hero App Mockup */}
         <ScrollReveal delay={400} className="w-full mt-16 max-w-4xl">
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-1 shadow-sm">
+          <div className="landing-hover-card rounded-xl border border-gray-200 bg-gray-50 p-1 shadow-sm cursor-default">
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden p-5 text-left">
               <div className="flex items-center justify-between pb-5 border-b border-gray-100">
                 <div className="flex items-center gap-1.5">
@@ -232,12 +232,12 @@ const LandingPage = () => {
                         +28.4% growth
                       </span>
                     </div>
-                    <div className="h-36 flex items-end gap-2 pt-4 border-b border-gray-100">
-                      <div className="flex-1 bg-gray-100 rounded-t h-[20%]" />
-                      <div className="flex-1 bg-gray-100 rounded-t h-[40%]" />
-                      <div className="flex-1 bg-gray-100 rounded-t h-[35%]" />
-                      <div className="flex-1 bg-gray-200 rounded-t h-[65%]" />
-                      <div className="flex-1 bg-gray-900 rounded-t h-[85%]" />
+                    <div className="h-36 flex items-end gap-2 pt-4 border-b border-gray-100 group/chart">
+                      <div className="landing-chart-bar flex-1 bg-gray-100 rounded-t h-[20%] cursor-pointer" />
+                      <div className="landing-chart-bar flex-1 bg-gray-100 rounded-t h-[40%] cursor-pointer" />
+                      <div className="landing-chart-bar flex-1 bg-gray-100 rounded-t h-[35%] cursor-pointer" />
+                      <div className="landing-chart-bar flex-1 bg-gray-200 rounded-t h-[65%] cursor-pointer" />
+                      <div className="landing-chart-bar flex-1 bg-gray-900 rounded-t h-[85%] cursor-pointer" />
                     </div>
                   </div>
                 </div>
@@ -245,14 +245,14 @@ const LandingPage = () => {
                 <div className="border border-gray-200 rounded-lg p-4 bg-white space-y-3">
                   <h4 className="text-sm font-medium text-gray-900">Dynamic Stock Operations</h4>
                   <div className="space-y-2">
-                    <div className="flex justify-between items-center p-3 border border-red-100 bg-red-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 border border-red-100 bg-red-50 rounded-lg transition-transform duration-200 hover:scale-[1.02] hover:shadow-sm cursor-default">
                       <div>
                         <p className="font-medium text-gray-900 text-xs">Smart Watch S4</p>
                         <p className="text-[10px] text-gray-400">Barcode: #9310</p>
                       </div>
                       <span className="text-xs font-medium text-red-600">8 Units Left</span>
                     </div>
-                    <div className="flex justify-between items-center p-3 border border-green-100 bg-green-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 border border-green-100 bg-green-50 rounded-lg transition-transform duration-200 hover:scale-[1.02] hover:shadow-sm cursor-default">
                       <div>
                         <p className="font-medium text-gray-900 text-xs">Wireless Earbuds</p>
                         <p className="text-[10px] text-gray-400">Barcode: #4041</p>
@@ -271,16 +271,22 @@ const LandingPage = () => {
       <section className="relative z-10 border-y border-gray-200/80 bg-white/50 backdrop-blur-sm py-14">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
           <ScrollReveal>
-            <h3 className="text-3xl font-semibold text-gray-900 mb-1">99.9%</h3>
+            <div className="landing-stat-item">
+            <h3 className="text-3xl font-semibold text-gray-900 mb-1 transition-colors duration-300">99.9%</h3>
             <p className="text-sm text-gray-500">Inventory Sync Accuracy</p>
+            </div>
           </ScrollReveal>
           <ScrollReveal delay={100}>
-            <h3 className="text-3xl font-semibold text-gray-900 mb-1">&lt; 2s</h3>
+            <div className="landing-stat-item">
+            <h3 className="text-3xl font-semibold text-gray-900 mb-1 transition-colors duration-300">&lt; 2s</h3>
             <p className="text-sm text-gray-500">Barcode Scan & Record Time</p>
+            </div>
           </ScrollReveal>
           <ScrollReveal delay={200}>
-            <h3 className="text-3xl font-semibold text-gray-900 mb-1">15hr+</h3>
+            <div className="landing-stat-item">
+            <h3 className="text-3xl font-semibold text-gray-900 mb-1 transition-colors duration-300">15hr+</h3>
             <p className="text-sm text-gray-500">Operational Time Saved Weekly</p>
+            </div>
           </ScrollReveal>
         </div>
       </section>
@@ -306,7 +312,7 @@ const LandingPage = () => {
                 "Automated demand-spike predictions to prevent stockouts.",
                 "Intelligent suggestions integrated directly on your checkout dashboard."
               ].map((benefit, idx) => (
-                <li key={idx} className="flex items-start gap-3">
+                <li key={idx} className="landing-benefit-item flex items-start gap-3 cursor-default">
                   <span className="h-5 w-5 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xs text-gray-600 mt-0.5">✓</span>
                   <span className="text-sm text-gray-600">{benefit}</span>
                 </li>
@@ -315,7 +321,7 @@ const LandingPage = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={200}>
-            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="landing-hover-panel rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
               <div className="flex items-center gap-3 mb-5">
                 <div className="h-8 w-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
                   <span className="text-base">✨</span>
@@ -327,7 +333,7 @@ const LandingPage = () => {
               </div>
 
               <div className="space-y-3">
-                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div className="landing-ai-card border border-gray-200 rounded-lg p-4 bg-gray-50 cursor-default">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-medium text-gray-500">DEMAND SPIKE FORECAST</span>
                     <span className="text-[10px] bg-white text-gray-600 px-2 py-0.5 rounded border border-gray-200 font-mono">94% Confidence</span>
@@ -337,11 +343,11 @@ const LandingPage = () => {
                   </p>
                   <div className="mt-3 text-[10px] text-gray-400 border-t border-gray-200 pt-2 flex justify-between items-center">
                     <span>Suggested Action: Increase stock +25 units</span>
-                    <span className="text-gray-700 font-medium cursor-pointer hover:underline">Apply Action</span>
+                    <span className="landing-action-link text-gray-700 font-medium cursor-pointer">Apply Action</span>
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div className="landing-ai-card border border-gray-200 rounded-lg p-4 bg-gray-50 cursor-default">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-medium text-gray-500">CROSS-SELL SUGGESTION</span>
                     <span className="text-[10px] bg-white text-gray-600 px-2 py-0.5 rounded border border-gray-200 font-mono">89% Correlation</span>
@@ -351,7 +357,7 @@ const LandingPage = () => {
                   </p>
                   <div className="mt-3 text-[10px] text-gray-400 border-t border-gray-200 pt-2 flex justify-between items-center">
                     <span>Suggested Bundle Discount: 12% off set</span>
-                    <span className="text-gray-700 font-medium cursor-pointer hover:underline">Create Bundle</span>
+                    <span className="landing-action-link text-gray-700 font-medium cursor-pointer">Create Bundle</span>
                   </div>
                 </div>
               </div>
@@ -383,8 +389,8 @@ const LandingPage = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-shrink-0 text-left p-4 rounded-lg transition-colors outline-none w-[200px] lg:w-full cursor-pointer ${activeTab === tab.id
-                  ? "bg-gray-100 border border-gray-200 text-gray-900"
+                className={`landing-tab-btn flex-shrink-0 text-left p-4 rounded-lg outline-none w-[200px] lg:w-full cursor-pointer ${activeTab === tab.id
+                  ? "bg-gray-100 border border-gray-200 text-gray-900 shadow-sm"
                   : "text-gray-500 hover:text-gray-900 hover:bg-gray-50 border border-transparent"
                   }`}
               >
@@ -394,7 +400,7 @@ const LandingPage = () => {
             ))}
           </div>
 
-          <div className="lg:col-span-8 border border-gray-200 rounded-xl p-5 min-h-[360px] flex flex-col justify-center bg-white">
+          <div className="landing-hover-panel lg:col-span-8 border border-gray-200 rounded-xl p-5 min-h-[360px] flex flex-col justify-center bg-white">
             {activeTab === "tracking" && (
               <ScrollReveal className="space-y-5">
                 <div className="flex justify-between items-center">
@@ -403,7 +409,7 @@ const LandingPage = () => {
                 </div>
                 <div className="space-y-2">
                   {simulatedStock.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center p-3 border border-gray-200 rounded-lg bg-gray-50">
+                    <div key={idx} className="landing-stock-row flex justify-between items-center p-3 border border-gray-200 rounded-lg bg-gray-50 cursor-default">
                       <div>
                         <p className="font-medium text-gray-900 text-sm">{item.name}</p>
                         <p className="text-[10px] text-gray-400">Auto-synced just now</p>
@@ -421,7 +427,7 @@ const LandingPage = () => {
 
             {activeTab === "scanning" && (
               <ScrollReveal className="text-center space-y-5 max-w-md mx-auto">
-                <div className="h-16 w-16 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center mx-auto text-2xl">
+                <div className="h-16 w-16 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center mx-auto text-2xl transition-transform duration-300 hover:scale-110 hover:rotate-3">
                   🏷️
                 </div>
                 <div>
@@ -433,7 +439,7 @@ const LandingPage = () => {
                 <button
                   onClick={handleSimulateScan}
                   disabled={barcodeScanned}
-                  className={`w-full font-medium px-6 py-3 rounded-lg transition-colors cursor-pointer ${barcodeScanned
+                  className={`landing-btn-primary w-full font-medium px-6 py-3 rounded-lg cursor-pointer ${barcodeScanned
                     ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
                     : "bg-gray-900 hover:bg-gray-800 text-white"
                     }`}
@@ -465,7 +471,7 @@ const LandingPage = () => {
                     { day: "Sun", sales: 110 }
                   ].map((d, index) => (
                     <div key={index} className="flex-1 flex flex-col items-center h-full justify-end">
-                      <div className="bg-gray-900 rounded-t w-full max-w-[24px]" style={{ height: `${(d.sales / 160) * 100}%` }} />
+                      <div className="landing-chart-bar bg-gray-900 rounded-t w-full max-w-[24px] cursor-pointer" style={{ height: `${(d.sales / 160) * 100}%` }} />
                       <span className="text-[10px] text-gray-400 mt-2">{d.day}</span>
                     </div>
                   ))}
@@ -494,7 +500,7 @@ const LandingPage = () => {
         </ScrollReveal>
 
         <ScrollReveal delay={100} className="relative">
-          <div className="border border-gray-200 rounded-2xl p-8 md:p-10 bg-white/80 backdrop-blur-sm shadow-sm shadow-gray-200/50">
+          <div className="landing-form-card border border-gray-200 rounded-2xl p-8 md:p-10 bg-white/80 backdrop-blur-sm shadow-sm shadow-gray-200/50">
             {isSubmitted ? (
               <div className="text-center py-10 space-y-5">
                 <div className="h-14 w-14 bg-green-50 border border-green-200 text-green-600 text-3xl rounded-full flex items-center justify-center mx-auto">
@@ -511,7 +517,7 @@ const LandingPage = () => {
                     setIsSubmitted(false);
                     setFormData({ name: "", email: "", phone: "" });
                   }}
-                  className="text-xs text-gray-600 font-medium hover:underline cursor-pointer"
+                  className="landing-action-link text-xs text-gray-600 font-medium cursor-pointer"
                 >
                   Submit another request
                 </button>
@@ -528,7 +534,7 @@ const LandingPage = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="e.g., John Doe"
-                      className={`bg-white border text-sm rounded-lg p-3 focus:outline-none transition-colors placeholder:text-gray-400 ${formErrors.name
+                      className={`landing-input bg-white border text-sm rounded-lg p-3 focus:outline-none placeholder:text-gray-400 ${formErrors.name
                         ? "border-red-300 focus:border-red-400 focus:ring-1 focus:ring-red-200"
                         : "border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-200"
                         }`}
@@ -545,7 +551,7 @@ const LandingPage = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="e.g., +91 9876543210"
-                      className={`bg-white border text-sm rounded-lg p-3 focus:outline-none transition-colors placeholder:text-gray-400 ${formErrors.phone
+                      className={`landing-input bg-white border text-sm rounded-lg p-3 focus:outline-none placeholder:text-gray-400 ${formErrors.phone
                         ? "border-red-300 focus:border-red-400 focus:ring-1 focus:ring-red-200"
                         : "border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-200"
                         }`}
@@ -563,7 +569,7 @@ const LandingPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="e.g., john@example.com"
-                    className={`bg-white border text-sm rounded-lg p-3 focus:outline-none transition-colors placeholder:text-gray-400 ${formErrors.email
+                    className={`landing-input bg-white border text-sm rounded-lg p-3 focus:outline-none placeholder:text-gray-400 ${formErrors.email
                       ? "border-red-300 focus:border-red-400 focus:ring-1 focus:ring-red-200"
                       : "border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-200"
                       }`}
@@ -574,7 +580,7 @@ const LandingPage = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3.5 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:bg-gray-300 disabled:text-gray-500"
+                  className="landing-btn-primary w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:transform-none disabled:shadow-none"
                 >
                   {isSubmitting ? (
                     <>
