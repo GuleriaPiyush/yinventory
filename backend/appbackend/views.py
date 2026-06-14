@@ -195,8 +195,8 @@ def CreateSale(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def SalesGraphData(request):
-    """Returns the total sales amount for the given filter (day, week, month)"""
-    from django.db.models import Sum
+    """Returns the total sales and profit amount for the given filter (day, week, month, year)"""
+    from django.db.models import Sum, F
     from django.db.models.functions import TruncDate, TruncHour, TruncMonth, TruncYear
     from datetime import timedelta
     from django.utils import timezone
@@ -209,57 +209,73 @@ def SalesGraphData(request):
     if filter_type == 'day':
         # Last 24 hours, grouped by hour
         start_time = now - timedelta(days=1)
-        sales = Sales.objects.filter(created_at__gte=start_time) \
-            .annotate(date=TruncHour('created_at')) \
+        items = Sale_Item.objects.filter(sales__created_at__gte=start_time) \
+            .annotate(date=TruncHour('sales__created_at')) \
             .values('date') \
-            .annotate(sales=Sum('total_amount')) \
+            .annotate(
+                sales=Sum('subtotal'),
+                profit=Sum(F('quantity') * (F('price_at_sale') - F('product__cost_price')))
+            ) \
             .order_by('date')
             
-        for s in sales:
+        for s in items:
             data.append({
                 "name": s['date'].strftime('%I %p').lstrip('0'), # e.g., 2 PM
-                "sales": float(s['sales']) if s['sales'] else 0
+                "sales": float(s['sales']) if s['sales'] else 0,
+                "profit": float(s['profit']) if s['profit'] else 0
             })
             
     elif filter_type == 'month':
         # All time, grouped by month
-        sales = Sales.objects.annotate(date=TruncMonth('created_at')) \
+        items = Sale_Item.objects.annotate(date=TruncMonth('sales__created_at')) \
             .values('date') \
-            .annotate(sales=Sum('total_amount')) \
+            .annotate(
+                sales=Sum('subtotal'),
+                profit=Sum(F('quantity') * (F('price_at_sale') - F('product__cost_price')))
+            ) \
             .order_by('date')
             
-        for s in sales:
+        for s in items:
             data.append({
                 "name": s['date'].strftime('%b %Y'), # e.g., May 2026
-                "sales": float(s['sales']) if s['sales'] else 0
+                "sales": float(s['sales']) if s['sales'] else 0,
+                "profit": float(s['profit']) if s['profit'] else 0
             })
             
     elif filter_type == 'year':
         # All time, grouped by year
-        sales = Sales.objects.annotate(date=TruncYear('created_at')) \
+        items = Sale_Item.objects.annotate(date=TruncYear('sales__created_at')) \
             .values('date') \
-            .annotate(sales=Sum('total_amount')) \
+            .annotate(
+                sales=Sum('subtotal'),
+                profit=Sum(F('quantity') * (F('price_at_sale') - F('product__cost_price')))
+            ) \
             .order_by('date')
             
-        for s in sales:
+        for s in items:
             data.append({
                 "name": s['date'].strftime('%Y'), # e.g., 2026
-                "sales": float(s['sales']) if s['sales'] else 0
+                "sales": float(s['sales']) if s['sales'] else 0,
+                "profit": float(s['profit']) if s['profit'] else 0
             })
             
     else: # default to week
         # Last 7 days, grouped by day
         start_time = now - timedelta(days=7)
-        sales = Sales.objects.filter(created_at__gte=start_time) \
-            .annotate(date=TruncDate('created_at')) \
+        items = Sale_Item.objects.filter(sales__created_at__gte=start_time) \
+            .annotate(date=TruncDate('sales__created_at')) \
             .values('date') \
-            .annotate(sales=Sum('total_amount')) \
+            .annotate(
+                sales=Sum('subtotal'),
+                profit=Sum(F('quantity') * (F('price_at_sale') - F('product__cost_price')))
+            ) \
             .order_by('date')
             
-        for s in sales:
+        for s in items:
             data.append({
                 "name": s['date'].strftime('%a'), # e.g., Mon
-                "sales": float(s['sales']) if s['sales'] else 0
+                "sales": float(s['sales']) if s['sales'] else 0,
+                "profit": float(s['profit']) if s['profit'] else 0
             })
         
     return Response(data)
