@@ -13,6 +13,7 @@ class Product_Inventory(models.Model):
         ('pieces', 'pieces'),
     ]
 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=255)
     cost_price = models.DecimalField(max_digits=10, decimal_places=2)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -20,7 +21,10 @@ class Product_Inventory(models.Model):
     unit = models.CharField(max_length=10, choices=unit_choice)
     barcode = models.CharField(max_length=50)
 
-
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'barcode'], name='unique_user_barcode')
+        ]
 
     def __str__(self):
         return f"{self.name} {self.stock} {self.unit} left"
@@ -34,6 +38,7 @@ class Sales(models.Model):
     #     ('cancelled', 'cancelled'),
     # ]
 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     transaction_id = models.CharField(max_length=100, unique=True)
     products = models.TextField() #this field is redundant as we are storing items in Sale_Item model
     amount = models.DecimalField(max_digits=10, decimal_places=2) 
