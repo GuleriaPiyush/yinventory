@@ -16,6 +16,19 @@ const SalesPage = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
+  const [discountType, setDiscountType] = useState("percentage"); // "percentage" or "flat"
+  const [discountValue, setDiscountValue] = useState("");
+
+  const getDiscountedPrice = (price) => {
+    const val = parseFloat(discountValue) || 0;
+    if (val <= 0) return price;
+    if (discountType === "percentage") {
+      return price * (1 - Math.min(100, val) / 100);
+    } else {
+      return Math.max(0, price - val);
+    }
+  };
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -135,10 +148,16 @@ const SalesPage = () => {
     );
   };
 
-  // Calculate Total
-  const totalAmount = billItems.reduce((total, item) => {
+  // Calculate Totals
+  const originalSubtotal = billItems.reduce((total, item) => {
     return total + item.product.selling_price * item.quantity;
   }, 0);
+
+  const totalAmount = billItems.reduce((total, item) => {
+    return total + getDiscountedPrice(item.product.selling_price) * item.quantity;
+  }, 0);
+
+  const totalDiscount = originalSubtotal - totalAmount;
 
   // Submit the Bill to Backend
   const handleCreateBill = async () => {
@@ -150,9 +169,12 @@ const SalesPage = () => {
     setLoading(true);
     setMessage({ type: "", text: "" });
 
+    const parsedDiscountValue = parseFloat(discountValue) || 0;
     const payload = {
       customer_name: customerName,
       customer_phone: customerPhone,
+      discount_type: parsedDiscountValue > 0 ? discountType : null,
+      discount_value: parsedDiscountValue > 0 ? parsedDiscountValue : 0,
       items: billItems.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
@@ -181,6 +203,8 @@ const SalesPage = () => {
         setBillItems([]);
         setCustomerName("");
         setCustomerPhone("");
+        setDiscountValue("");
+        setDiscountType("percentage");
       } else {
         setMessage({
           type: "error",
@@ -314,8 +338,16 @@ const SalesPage = () => {
                       <p className="text-sm font-medium text-gray-900">
                         {item.product.name}
                       </p>
-                      <p className="text-xs text-gray-500">
-                        ${item.product.selling_price} x {item.quantity}
+                      <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                        {parseFloat(discountValue) > 0 ? (
+                          <>
+                            <span className="line-through text-gray-400">Rs. {parseFloat(item.product.selling_price).toFixed(2)}</span>
+                            <span className="text-indigo-600 font-semibold">Rs. {getDiscountedPrice(item.product.selling_price).toFixed(2)}</span>
+                          </>
+                        ) : (
+                          <span>Rs. {parseFloat(item.product.selling_price).toFixed(2)}</span>
+                        )}{" "}
+                        <span>x {item.quantity}</span>
                       </p>
                     </div>
 
@@ -367,11 +399,75 @@ const SalesPage = () => {
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
             />
 
-            <div className="flex justify-between items-center py-2">
-              <span className="text-lg font-bold text-gray-700">Total:</span>
-              <span className="text-2xl font-bold text-indigo-600">
-                Rs. {totalAmount.toFixed(2)}
-              </span>
+            {/* Discount Section */}
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 space-y-2">
+              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Apply Custom Discount (per item)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder={discountType === "percentage" ? "Enter % (e.g. 10)" : "Enter amount (e.g. 50)"}
+                  value={discountValue}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || parseFloat(val) >= 0) {
+                      setDiscountValue(val);
+                    }
+                  }}
+                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+                  min="0"
+                  max={discountType === "percentage" ? "100" : undefined}
+                />
+                <div className="flex rounded-md border border-gray-300 overflow-hidden bg-white">
+                  <button
+                    type="button"
+                    onClick={() => setDiscountType("percentage")}
+                    className={`px-3 py-2 text-xs font-semibold transition-colors ${
+                      discountType === "percentage"
+                        ? "bg-indigo-600 text-white"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    %
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDiscountType("flat")}
+                    className={`px-3 py-2 text-xs font-semibold transition-colors ${
+                      discountType === "flat"
+                        ? "bg-indigo-600 text-white"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    Flat
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Total Summary */}
+            <div className="border-t border-gray-200 pt-2 space-y-1.5">
+              {parseFloat(discountValue) > 0 && (
+                <>
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>Subtotal:</span>
+                    <span>Rs. {originalSubtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-emerald-600 font-medium">
+                    <span>
+                      Discount ({discountType === "percentage" ? `${discountValue}%` : `Rs. ${discountValue}`} off per item):
+                    </span>
+                    <span>-Rs. {totalDiscount.toFixed(2)}</span>
+                  </div>
+                </>
+              )}
+              <div className="flex justify-between items-center py-1">
+                <span className="text-lg font-bold text-gray-700">Total:</span>
+                <span className="text-2xl font-bold text-indigo-600">
+                  Rs. {totalAmount.toFixed(2)}
+                </span>
+              </div>
             </div>
 
             <button

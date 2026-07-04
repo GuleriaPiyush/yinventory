@@ -130,7 +130,25 @@ def CreateSale(request):
     items = data.get('items', [])
     if not items:
         return Response({"error": "No items in the bill."}, status=status.HTTP_400_BAD_REQUEST)
+
+    discount_type = data.get('discount_type', None)
+    discount_value_raw = data.get('discount_value', 0)
+    
     try:
+        discount_value = Decimal(str(discount_value_raw))
+    except Exception:
+        discount_value = Decimal('0.00')
+        
+    if discount_type not in ['percentage', 'flat']:
+        discount_type = None
+        discount_value = Decimal('0.00')
+
+    try:
+        if discount_value < 0:
+            raise Exception("Discount value cannot be negative.")
+        if discount_type == 'percentage' and discount_value > 100:
+            raise Exception("Percentage discount cannot exceed 100%.")
+
         # Use a transaction so if anything fails, no partial changes are saved
         with transaction.atomic():
             # 1. Create the main Sale record
@@ -143,6 +161,8 @@ def CreateSale(request):
                 customer_phone=customer_phone,
                 amount=0, 
                 total_amount=0,
+                discount_type=discount_type,
+                discount_value=discount_value,
                 products="Recorded in Sale_Item" # Placeholder for your redundant text field
             )
             total_amount = Decimal('0.00')
@@ -165,6 +185,12 @@ def CreateSale(request):
                 product.save()
                 # 3. Create Sale_Item record
                 price_at_sale = product.selling_price
+                if discount_type == 'percentage':
+                    price_at_sale = price_at_sale * (Decimal('1') - discount_value / Decimal('100'))
+                elif discount_type == 'flat':
+                    price_at_sale = max(Decimal('0.00'), price_at_sale - discount_value)
+                
+                price_at_sale = round(price_at_sale, 2)
                 subtotal = quantity * price_at_sale
                 
                 Sale_Item.objects.create(

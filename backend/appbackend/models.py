@@ -49,6 +49,14 @@ class Sales(models.Model):
 
     total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
+    discount_type = models.CharField(
+        max_length=20, 
+        choices=[('percentage', 'Percentage'), ('flat', 'Flat')], 
+        blank=True, 
+        null=True
+    )
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
     def __str__(self):
         return f"{self.transaction_id}, {self.total_amount}, {self.customer_name},"    
 

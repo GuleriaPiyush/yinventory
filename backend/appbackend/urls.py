@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 
+
 urlpatterns = [
     path('inventory/', views.InventoryList, name='inventory-list'),
     path('inventory/create/', views.RestockProducts, name='restock-products'),
