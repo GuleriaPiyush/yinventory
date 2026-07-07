@@ -127,6 +127,8 @@ items = [
     {"name": "Comfort Fabric Conditioner", "cost_price": 180, "selling_price": 220, "stock": 90, "unit": "pieces", "barcode": "8904109400259"},
 ]
 
+
+
 # from django.contrib.auth import get_user_model
 # User = get_user_model()
 # target_user = User.objects.get(username = "randomusername")
