@@ -127,19 +127,19 @@ items = [
     {"name": "Comfort Fabric Conditioner", "cost_price": 180, "selling_price": 220, "stock": 90, "unit": "pieces", "barcode": "8904109400259"},
 ]
 
-from django.contrib.auth import get_user_model
-User = get_user_model()
-target_user = User.objects.get(username = "satyam@testuser")
+# from django.contrib.auth import get_user_model
+# User = get_user_model()
+# target_user = User.objects.get(username = "randomusername")
 
-for item in items:
-    defaults = item.copy()
-    defaults.pop("barcode", None)
-    defaults["user"] = target_user
-    Product_Inventory.objects.get_or_create(
-        user = target_user, 
-        barcode=item["barcode"],
-        defaults = defaults
-    )
+# for item in items:
+#     defaults = item.copy()
+#     defaults.pop("barcode", None)
+#     defaults["user"] = target_user
+#     Product_Inventory.objects.get_or_create(
+#         user = target_user, 
+#         barcode=item["barcode"],
+#         defaults = defaults
+#     )
 
 
 
