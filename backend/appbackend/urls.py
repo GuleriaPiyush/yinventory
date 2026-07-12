@@ -11,4 +11,5 @@ urlpatterns = [
     path('sales/create/', views.CreateSale, name='create-sale'),
     path('sales/graph/', views.SalesGraphData, name='sales-graph'),
     path('login/', views.LoginView, name='login'),
+    path('sales/', views.sales, name='sales'),
 ]
