@@ -300,3 +300,18 @@ def SalesGraphData(request):
             })
         
     return Response(data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def sales(request):
+    all_sales = Sales.objects.all()
+    serializers = SalesSerializer(all_sales, many=True)
+    return Response(serializers.data)
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def InventoryList(request):
+#     inventory = Product_Inventory.objects.filter(user=request.user)
+#     serializer = ProductInventorySerializer(inventory, many=True)
+#     return Response(serializer.data)
