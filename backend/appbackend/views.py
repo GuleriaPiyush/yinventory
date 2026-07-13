@@ -302,9 +302,9 @@ def SalesGraphData(request):
     return Response(data)
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def sales(request):
-    all_sales = Sales.objects.all()
+    all_sales = Sales.objects.filter(user=request.user).order_by('-created_at')
     serializers = SalesSerializer(all_sales, many=True)
     return Response(serializers.data)
 
