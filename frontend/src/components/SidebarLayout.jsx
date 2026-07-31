@@ -74,7 +74,7 @@ const SidebarLayout = () => {
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 border-transparent'}
                 `}
               >
-                <span className="text-lg">{item.icon}</span>
+                {item.icon && <span className="text-lg">{item.icon}</span>}
                 {item.name}
               </Link>
             );
