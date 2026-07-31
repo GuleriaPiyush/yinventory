@@ -13,12 +13,12 @@ const SidebarLayout = () => {
   };
 
   const menuItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: '📊' },
-    { name: 'View Inventory', path: '/inventory', icon: '📦' },
-    { name: 'Restock Items', path: '/inventory/restock', icon: '🔄' },
-    { name: 'Add Product', path: '/inventory/add-new', icon: '➕' },
+    { name: 'Dashboard', path: '/dashboard', icon: '' },
+    { name: 'View Inventory', path: '/inventory', icon: '' },
+    { name: 'Restock Items', path: '/inventory/restock', icon: '' },
+    { name: 'Add Product', path: '/inventory/add-new', icon: '' },
     { name: 'POS', path: '/sales', icon: '🛒' },
-    { name: 'Analytics & Reports', path: '/analytics', icon: '📈' },
+    { name: 'Analytics & Reports', path: '/analytics', icon: '' },
   ];
 
   const username = localStorage.getItem('username') || 'User';
@@ -74,7 +74,7 @@ const SidebarLayout = () => {
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 border-transparent'}
                 `}
               >
-                <span className="text-lg">{item.icon}</span>
+                {item.icon && <span className="text-lg">{item.icon}</span>}
                 {item.name}
               </Link>
             );
