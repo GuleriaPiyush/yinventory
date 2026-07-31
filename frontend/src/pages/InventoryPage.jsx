@@ -106,8 +106,8 @@ function InventoryPage() {
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{product.unit}</td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">${parseFloat(product.cost_price).toFixed(2)}</td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">${parseFloat(product.selling_price).toFixed(2)}</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹{parseFloat(product.cost_price).toFixed(2)}</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹{parseFloat(product.selling_price).toFixed(2)}</td>
                     </tr>
                   ))}
                   {filteredInventory.length === 0 && (

@@ -44,11 +44,6 @@ const AnalyticsPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -136,29 +131,9 @@ const AnalyticsPage = () => {
       <div className="relative z-10 max-w-7xl mx-auto p-6 space-y-6">
         {/* Navigation / Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow transition-all text-gray-500 hover:text-gray-900 cursor-pointer"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-            </Link>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Analytics & Reports</h1>
-              <p className="text-xs md:text-sm text-gray-500 mt-0.5">Real-time indicators of Yinventory financial health</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 self-end md:self-center">
-            <span className="text-xs md:text-sm font-medium text-gray-500">Hello, {localStorage.getItem("username") || "Store Owner"}</span>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-xs md:text-sm bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg border border-gray-200 shadow-sm transition-colors cursor-pointer"
-            >
-              Logout
-            </button>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Analytics & Reports</h1>
+            <p className="text-xs md:text-sm text-gray-500 mt-0.5">Real-time indicators of Yinventory financial health</p>
           </div>
         </div>
 

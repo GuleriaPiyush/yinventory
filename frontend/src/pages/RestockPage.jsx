@@ -163,7 +163,7 @@ function RestockPage() {
                   htmlFor="cost_price"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Cost Price ($)
+                  Cost Price (₹)
                 </label>
                 <div className="mt-1">
                   <input
@@ -184,7 +184,7 @@ function RestockPage() {
                   htmlFor="selling_price"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Selling Price ($)
+                  Selling Price (₹)
                 </label>
                 <div className="mt-1">
                   <input
