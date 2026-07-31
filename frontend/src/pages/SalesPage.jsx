@@ -280,7 +280,7 @@ const SalesPage = () => {
                         {p.barcode}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-900">
-                        ${p.selling_price}
+                        ₹{p.selling_price}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">
                         {p.stock} {p.unit}
