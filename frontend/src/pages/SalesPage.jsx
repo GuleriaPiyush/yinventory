@@ -2,12 +2,14 @@ import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from '../config';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import BarcodeScannerInline from "../components/BarcodeScannerInline";
 
 const SalesPage = () => {
   useDocumentTitle("POS");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [billItems, setBillItems] = useState([]);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const searchInputRef = useRef(null);
 
   const [customerName, setCustomerName] = useState("");
@@ -128,6 +130,46 @@ const SalesPage = () => {
     }, 0);
   };
 
+  // Handle barcode scanned from the camera scanner modal
+  const handleBarcodeScanned = async (barcode) => {
+    setSearchQuery(barcode);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(
+        `${API_BASE_URL}/api/inventory/search/?q=${encodeURIComponent(barcode)}`,
+        { headers: { 'Authorization': `Token ${token}` } }
+      );
+      const data = await res.json();
+
+      const product = Array.isArray(data)
+        ? data.find((p) => p.barcode === barcode) ||
+          (data.length === 1 ? data[0] : null)
+        : null;
+
+      if (product) {
+        addToBill(product);
+        setMessage({
+          type: "success",
+          text: `Added "${product.name}" to bill!`,
+        });
+        setTimeout(() => setMessage({ type: "", text: "" }), 2500);
+      } else {
+        setMessage({
+          type: "error",
+          text: `Product with barcode "${barcode}" not found.`,
+        });
+        setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+      }
+    } catch (err) {
+      console.error("Barcode scan lookup error:", err);
+      setMessage({
+        type: "error",
+        text: "Failed to search product from scan.",
+      });
+    }
+  };
+
   // Update item quantity
   const updateQuantity = (productId, change) => {
     setBillItems((prevItems) =>
@@ -227,23 +269,56 @@ const SalesPage = () => {
             Search Products
           </h2>
 
-          <form onSubmit={handleSearchSubmit} className="flex gap-4 mb-6">
-            <input
-              type="text"
-              ref={searchInputRef}
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Scan Barcode or Search Name..."
-              className="flex-1 rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              autoFocus
-            />
+          <form onSubmit={handleSearchSubmit} className="flex gap-2 sm:gap-3 mb-4">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Scan Barcode or Search Name..."
+                className="w-full rounded-md border border-gray-300 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setIsScannerOpen((prev) => !prev)}
+                title={isScannerOpen ? "Close Camera Scanner" : "Open Camera Scanner"}
+                className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md transition-colors cursor-pointer ${
+                  isScannerOpen
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
+                }`}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+                  />
+                </svg>
+              </button>
+            </div>
             <button
               type="submit"
-              className="bg-indigo-600 text-white px-6 py-3 rounded-md font-medium hover:bg-indigo-700"
+              className="bg-indigo-600 text-white px-6 py-3 rounded-md font-medium hover:bg-indigo-700 cursor-pointer"
             >
               Search
             </button>
           </form>
+
+          {/* Inline Barcode Scanner */}
+          <BarcodeScannerInline
+            isOpen={isScannerOpen}
+            onClose={() => setIsScannerOpen(false)}
+            onScan={handleBarcodeScanned}
+          />
 
           {/* Search Results List */}
           {searchResults.length > 0 && (
