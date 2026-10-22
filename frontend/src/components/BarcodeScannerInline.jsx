@@ -81,13 +81,18 @@ const BarcodeScannerInline = ({ isOpen, onClose, onScan }) => {
     const html5QrCode = new Html5Qrcode(qrRegionId, {
       formatsToSupport,
       verbose: false,
+      experimentalFeatures: {
+        useBarCodeDetectorIfSupported: true, // Uses native hardware acceleration on mobile
+      },
     });
     scannerRef.current = html5QrCode;
 
+    // Full-frame scanning config: no forced landscape aspect ratio and no buggy crop coordinates
     const config = {
-      fps: 15,
-      qrbox: { width: 280, height: 160 }, // Wide box for retail barcodes
-      aspectRatio: 1.333,
+      fps: 10,
+      videoConstraints: {
+        facingMode: { ideal: "environment" },
+      },
     };
 
     const handleSuccess = (decodedText) => {
@@ -198,14 +203,24 @@ const BarcodeScannerInline = ({ isOpen, onClose, onScan }) => {
           `}</style>
         </div>
 
+        {/* Visual Reticle Box for user alignment */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="w-60 h-36 border border-white/20 rounded-xl relative shadow-sm">
+            <span className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-indigo-400 rounded-tl-sm"></span>
+            <span className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-indigo-400 rounded-tr-sm"></span>
+            <span className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-indigo-400 rounded-bl-sm"></span>
+            <span className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-indigo-400 rounded-br-sm"></span>
+          </div>
+        </div>
+
         {scannedAlert && (
-          <div className="absolute top-4 bg-emerald-500 text-white px-3.5 py-1 rounded-full text-xs font-semibold shadow-lg animate-bounce">
+          <div className="absolute top-4 bg-emerald-500 text-white px-3.5 py-1 rounded-full text-xs font-semibold shadow-lg animate-bounce z-10">
             ✓ {scannedAlert}
           </div>
         )}
 
         {errorMessage && (
-          <div className="p-4 text-center text-rose-300 text-xs">
+          <div className="p-4 text-center text-rose-300 text-xs z-10">
             {errorMessage}
           </div>
         )}
