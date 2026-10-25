@@ -24,9 +24,25 @@ const BarcodeScannerInline = ({ isOpen, onClose, onScan }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [continuous, setContinuous] = useState(false);
   const [scannedAlert, setScannedAlert] = useState("");
+  const [torchSupported, setTorchSupported] = useState(false);
+  const [isTorchOn, setIsTorchOn] = useState(false);
   const scannerRef = useRef(null);
   const isScanningRef = useRef(false);
   const lastScannedTimeRef = useRef(0);
+
+  const toggleTorch = async () => {
+    if (!scannerRef.current || !isScanningRef.current) return;
+    try {
+      const nextTorch = !isTorchOn;
+      const capabilities = scannerRef.current.getRunningTrackCameraCapabilities();
+      if (capabilities?.torchFeature()?.isSupported()) {
+        await capabilities.torchFeature().apply(nextTorch);
+        setIsTorchOn(nextTorch);
+      }
+    } catch (err) {
+      console.error("Failed to toggle flash:", err);
+    }
+  };
 
   // Keep latest props/state in refs to prevent camera stream restarts
   const continuousRef = useRef(continuous);
@@ -40,6 +56,8 @@ const BarcodeScannerInline = ({ isOpen, onClose, onScan }) => {
   }, [onScan]);
 
   const handleClose = useCallback(() => {
+    setIsTorchOn(false);
+    setTorchSupported(false);
     if (scannerRef.current && isScanningRef.current) {
       scannerRef.current
         .stop()
@@ -131,6 +149,14 @@ const BarcodeScannerInline = ({ isOpen, onClose, onScan }) => {
           return;
         }
         isScanningRef.current = true;
+        try {
+          const capabilities = html5QrCode.getRunningTrackCameraCapabilities();
+          if (capabilities?.torchFeature()?.isSupported()) {
+            setTorchSupported(true);
+          }
+        } catch (err) {
+          console.log("Torch not supported on this camera/device:", err);
+        }
       })
       .catch((err) => {
         if (!isMounted) return;
@@ -142,6 +168,8 @@ const BarcodeScannerInline = ({ isOpen, onClose, onScan }) => {
 
     return () => {
       isMounted = false;
+      setIsTorchOn(false);
+      setTorchSupported(false);
       if (scannerRef.current && isScanningRef.current) {
         scannerRef.current
           .stop()
@@ -178,13 +206,40 @@ const BarcodeScannerInline = ({ isOpen, onClose, onScan }) => {
             </p>
           </div>
         </div>
-        <button
-          onClick={handleClose}
-          className="px-2.5 py-1 text-xs text-slate-300 hover:text-white bg-slate-700 hover:bg-slate-600 rounded-md transition-colors cursor-pointer flex items-center gap-1"
-          title="Close scanner"
-        >
-          <span>✕</span> Close
-        </button>
+        <div className="flex items-center gap-2">
+          {torchSupported && (
+            <button
+              type="button"
+              onClick={toggleTorch}
+              className={`px-2.5 py-1 text-xs rounded-md transition-colors cursor-pointer flex items-center gap-1.5 font-medium ${
+                isTorchOn
+                  ? "bg-amber-400 text-slate-900 hover:bg-amber-300 shadow-sm"
+                  : "bg-slate-700 text-slate-300 hover:text-white hover:bg-slate-600"
+              }`}
+              title={isTorchOn ? "Turn Flash Off" : "Turn Flash On"}
+            >
+              <svg
+                className="w-3.5 h-3.5"
+                viewBox="0 0 24 24"
+                fill={isTorchOn ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              <span>{isTorchOn ? "Flash On" : "Flash"}</span>
+            </button>
+          )}
+          <button
+            onClick={handleClose}
+            className="px-2.5 py-1 text-xs text-slate-300 hover:text-white bg-slate-700 hover:bg-slate-600 rounded-md transition-colors cursor-pointer flex items-center gap-1"
+            title="Close scanner"
+          >
+            <span>✕</span> Close
+          </button>
+        </div>
       </div>
 
       {/* Viewfinder Area */}
