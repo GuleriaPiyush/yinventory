@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { API_BASE_URL } from '../config';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import BarcodeScannerInline from "../components/BarcodeScannerInline";
 
 
 const AddInventoryPage = () => {
@@ -15,6 +16,7 @@ const AddInventoryPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -179,15 +181,43 @@ const AddInventoryPage = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Barcode
               </label>
-              <input
-                type="text"
-                name="barcode"
-                value={formData.barcode}
-                onChange={handleChange}
-                required
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                placeholder="Scan or enter barcode"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  name="barcode"
+                  value={formData.barcode}
+                  onChange={handleChange}
+                  required
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  placeholder="Scan or enter barcode"
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsScannerOpen((prev) => !prev)}
+                  title={isScannerOpen ? "Close Scanner" : "Scan Barcode"}
+                  className={`px-3 py-2 rounded-md border transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
+                    isScannerOpen
+                      ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
+                      : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-200"
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Camera Scanner Viewport */}
+              <div className="mt-3">
+                <BarcodeScannerInline
+                  isOpen={isScannerOpen}
+                  onClose={() => setIsScannerOpen(false)}
+                  onScan={(barcode) => {
+                    setFormData((prev) => ({ ...prev, barcode }));
+                    setIsScannerOpen(false);
+                  }}
+                />
+              </div>
             </div>
 
             <div className="pt-4 border-t border-gray-100">
