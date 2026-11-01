@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import api from '../api';
 
 const SidebarLayout = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (refreshToken) {
+      try {
+        await api.post('/api/logout/', { refresh: refreshToken });
+      } catch (err) {
+        // Continue logout even if server blacklist fails
+      }
+    }
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     navigate("/login");
