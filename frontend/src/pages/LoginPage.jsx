@@ -25,8 +25,10 @@ const LoginPage = () => {
 
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem("token", data.token); // Save token
-        localStorage.setItem("username", username); // Save username
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+        localStorage.setItem("token", data.access); // Backward compatibility
+        localStorage.setItem("username", data.username || username);
         navigate("/dashboard"); // Redirect to dashboard
       } else {
         setError("Invalid credentials! Please check your username and password.");

@@ -10,7 +10,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import SidebarLayout from './components/SidebarLayout';
 
 const PrivateRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('token');
+  const isAuthenticated = localStorage.getItem('access_token') || localStorage.getItem('token');
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
