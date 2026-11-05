@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from '../config';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import api from '../api';
 
 const HomePage = () => {
   useDocumentTitle("Dashboard");
@@ -23,25 +23,15 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         // 1. Fetch Inventory for Low Stock Warning and metrics
-        const invRes = await fetch(`${API_BASE_URL}/api/inventory/`, {
-          headers: { Authorization: `Token ${token}` },
-        });
-        let invData = [];
-        if (invRes.ok) {
-          invData = await invRes.json();
-          setInventoryItems(invData);
-          const lowStock = invData.filter((item) => parseFloat(item.stock) < 10);
-          setLowStockItems(lowStock);
-        }
+        const invRes = await api.get('/api/inventory/');
+        const invData = invRes.data || [];
+        setInventoryItems(invData);
+        setLowStockItems(invData.filter((item) => parseFloat(item.stock) < 10));
 
         // 2. Fetch Recent Sales
-        const salesListRes = await fetch(`${API_BASE_URL}/api/sales/`, {
-          headers: { Authorization: `Token ${token}` },
-        });
-        if (salesListRes.ok) {
-          const salesList = await salesListRes.json();
-          setRecentSales(salesList.slice(0, 5)); // Keep last 5 sales
-        }
+        const salesListRes = await api.get('/api/sales/');
+        const salesList = salesListRes.data || [];
+        setRecentSales(salesList.slice(0, 5));
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
       } finally {
@@ -59,16 +49,8 @@ const HomePage = () => {
 
     const fetchSalesData = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE_URL}/api/sales/graph/?filter=${timeFilter}`,
-          { headers: { Authorization: `Token ${token}` } }
-        );
-        if (res.ok) {
-          const data = await res.json();
-          if (data) {
-            setSalesData(data);
-          }
-        }
+        const res = await api.get(`/api/sales/graph/?filter=${timeFilter}`);
+        setSalesData(res.data || []);
       } catch (err) {
         console.error("Failed to fetch sales graph data:", err);
       }
