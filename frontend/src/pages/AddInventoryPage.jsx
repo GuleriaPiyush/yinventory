@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { API_BASE_URL } from '../config';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import BarcodeScannerInline from "../components/BarcodeScannerInline";
+import api from '../api';
 
 
 const AddInventoryPage = () => {
@@ -32,42 +32,13 @@ const AddInventoryPage = () => {
     setMessage({ type: "", text: "" });
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${API_BASE_URL}/api/inventory/add-new/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Token ${token}`
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage({ type: "success", text: "Product added successfully!" });
-        // Clear the form on success
-        setFormData({
-          name: "",
-          cost_price: "",
-          selling_price: "",
-          stock: "",
-          unit: "kg",
-          barcode: "",
-        });
-      } else {
-        // Backend returns {"message":"..."} for barcode errors, or {"error": "..."}
-        const errorMsg = data.message || data.error || "Failed to add product.";
-        setMessage({ type: "error", text: errorMsg });
-      }
-    } catch (error) {
-      setMessage({
-        type: "error",
-        text: "Network error occurred. Make sure the Django server is running.",
-      });
+      const res = await api.post('/api/inventory/add-new/', formData);
+      setMessage({ type: "success", text: "Product added successfully!" });
+      setFormData({ name: "", cost_price: "", selling_price: "", stock: "", unit: "kg", barcode: "" });
+    } catch (err) {
+      const data = err.response?.data;
+      const errorMsg = data?.message || data?.error || "Failed to add product.";
+      setMessage({ type: "error", text: errorMsg });
     } finally {
       setLoading(false);
     }

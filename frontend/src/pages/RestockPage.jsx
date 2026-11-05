@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from '../config';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import BarcodeScannerInline from "../components/BarcodeScannerInline";
+import api from '../api';
 
 
 function RestockPage() {
@@ -38,44 +38,12 @@ function RestockPage() {
     setSuccessMessage("");
 
     try {
-      // Assuming your backend routes are prefixed with /api/ in the main urls.py
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${API_BASE_URL}/api/inventory/create/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Token ${token}`
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        // Extract validation errors if any
-        throw new Error(
-          errorData.message || `Network error: ${response.status}`,
-        );
-      }
-
-      setSuccessMessage("Product successfully added to inventory!");
-      // Reset form
-      setFormData({
-        name: "",
-        cost_price: "",
-        selling_price: "",
-        stock: "",
-        unit: "kg",
-        barcode: "",
-      });
-
-      //aafa
-      // Optional: Redirect back to inventory list after a delay
-      // setTimeout(() => navigate('/inventory'), 2000);
+      const response = await api.post('/api/inventory/create/', formData);
+      setSuccessMessage("Product successfully restocked!");
+      setFormData({ name: "", cost_price: "", selling_price: "", stock: "", unit: "kg", barcode: "" });
     } catch (err) {
-      setError(err.message);
+      const errorData = err.response?.data;
+      setError(errorData?.message || errorData?.error || err.message || 'Restock failed.');
     } finally {
       setLoading(false);
     }

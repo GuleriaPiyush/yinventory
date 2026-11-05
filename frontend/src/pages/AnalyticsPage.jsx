@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../config";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import api from "../api";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -55,24 +55,13 @@ const AnalyticsPage = () => {
       setLoading(true);
       try {
         // 1. Fetch Sales Graph Data
-        const salesRes = await fetch(
-          `${API_BASE_URL}/api/sales/graph/?filter=${timeFilter}`,
-          { headers: { Authorization: `Token ${token}` } }
-        );
-        let sData = [];
-        if (salesRes.ok) {
-          sData = await salesRes.json();
-          setSalesData(sData || []);
-        }
+        const salesRes = await api.get(`/api/sales/graph/?filter=${timeFilter}`);
+        setSalesData(salesRes.data || []);
 
         // 2. Fetch Inventory Data
-        const inventoryRes = await fetch(`${API_BASE_URL}/api/inventory/`, {
-          headers: { Authorization: `Token ${token}` }
-        });
-        if (inventoryRes.ok) {
-          const iData = await inventoryRes.json();
-          setInventory(iData || []);
-        }
+        const inventoryRes = await api.get('/api/inventory/');
+        setInventory(inventoryRes.data || []);
+
         setError(null);
       } catch (err) {
         console.error("Failed to fetch analytics data:", err);

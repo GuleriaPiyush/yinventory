@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from '../config';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import BarcodeScannerInline from "../components/BarcodeScannerInline";
+import api from '../api';
 
 const SalesPage = () => {
   useDocumentTitle("POS");
@@ -34,7 +34,10 @@ const SalesPage = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     navigate('/login');
   }
 
@@ -50,12 +53,8 @@ const SalesPage = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(
-        `${API_BASE_URL}/api/inventory/search/?q=${value}`,
-        { headers: { 'Authorization': `Token ${token}` } }
-      );
-      const data = await res.json();
+      const res = await api.get(`/api/inventory/search/?q=${value}`);
+      const data = res.data;
 
       // Auto-add if the typed value exactly matches a barcode
       const exactMatch = data.find((p) => p.barcode === value);
@@ -76,12 +75,8 @@ const SalesPage = () => {
     if (!searchQuery.trim()) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(
-        `${API_BASE_URL}/api/inventory/search/?q=${searchQuery}`,
-        { headers: { 'Authorization': `Token ${token}` } }
-      );
-      const data = await res.json();
+      const res = await api.get(`/api/inventory/search/?q=${searchQuery}`);
+      const data = res.data;
 
       if (data.length === 1) {
         // Exact match found (usually means it was a Barcode scan) - Add directly!
@@ -135,12 +130,8 @@ const SalesPage = () => {
     setSearchQuery(barcode);
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(
-        `${API_BASE_URL}/api/inventory/search/?q=${encodeURIComponent(barcode)}`,
-        { headers: { 'Authorization': `Token ${token}` } }
-      );
-      const data = await res.json();
+      const res = await api.get(`/api/inventory/search/?q=${encodeURIComponent(barcode)}`);
+      const data = res.data;
 
       const product = Array.isArray(data)
         ? data.find((p) => p.barcode === barcode) ||
@@ -224,37 +215,22 @@ const SalesPage = () => {
     };
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/sales/create/`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Token ${token}`
-        },
-        body: JSON.stringify(payload),
+      const response = await api.post('/api/sales/create/', payload);
+      setMessage({
+        type: "success",
+        text: `Success! Transaction ID: ${response.data.transaction_id}`,
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage({
-          type: "success",
-          text: `Success! Transaction ID: ${data.transaction_id}`,
-        });
-        // Clear everything after successful sale
-        setBillItems([]);
-        setCustomerName("");
-        setCustomerPhone("");
-        setDiscountValue("");
-        setDiscountType("percentage");
-      } else {
-        setMessage({
-          type: "error",
-          text: data.error || "Failed to create bill",
-        });
-      }
+      // Clear everything after successful sale
+      setBillItems([]);
+      setCustomerName("");
+      setCustomerPhone("");
+      setDiscountValue("");
+      setDiscountType("percentage");
     } catch (err) {
-      setMessage({ type: "error", text: "Network error occurred." });
+      setMessage({
+        type: "error",
+        text: err.response?.data?.error || "Failed to create bill",
+      });
     } finally {
       setLoading(false);
     }

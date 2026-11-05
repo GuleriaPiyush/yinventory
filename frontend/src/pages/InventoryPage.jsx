@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../config';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import api from '../api';
 
 
 function InventoryPage() {
@@ -13,25 +13,17 @@ function InventoryPage() {
 
 
   useEffect(() => {
-    // Fetch data from the Django backend
-    const token = localStorage.getItem('token');
-    fetch(`${API_BASE_URL}/api/inventory/`, {
-      headers: { 'Authorization': `Token ${token}` }
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Network error: ${response.status} ${response.statusText}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setInventory(data);
+    const fetchInventory = async () => {
+      try {
+        const res = await api.get('/api/inventory/');
+        setInventory(res.data);
+      } catch (err) {
+        setError(err.response?.data?.detail || err.message || 'Failed to load inventory.');
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
+      }
+    };
+    fetchInventory();
   }, []);
 
   const filteredInventory = inventory.filter((product) => {
