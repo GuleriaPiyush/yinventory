@@ -20,4 +20,7 @@ urlpatterns = [
     path('sales/create/', views.CreateSale, name='create-sale'),
     path('sales/graph/', views.SalesGraphData, name='sales-graph'),
     path('sales/', views.sales, name='sales'),
+
+    # Product update endpoint
+    path('inventory/<int:pk>/update/', views.UpdateProduct, name='update-product'),
 ]

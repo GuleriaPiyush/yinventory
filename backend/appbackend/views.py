@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import *
 from .serializers import *
 from rest_framework.decorators import api_view
@@ -332,3 +332,49 @@ def sales(request):
 #     inventory = Product_Inventory.objects.filter(user=request.user)
 #     serializer = ProductInventorySerializer(inventory, many=True)
 #     return Response(serializer.data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def UpdateProduct(request, pk):
+    """Update product details and/or add new stock."""
+    product = get_object_or_404(Product_Inventory, id=pk, user=request.user)
+
+    try:
+        add_stock_raw = request.data.get('add_stock', 0)
+        add_stock = Decimal(str(add_stock_raw)) if add_stock_raw else Decimal('0')
+
+        if add_stock < 0:
+            return Response({"error": "Stock to add cannot be negative."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if add_stock > 0:
+            # Weighted average price calculation when adding new stock
+            new_stock = product.stock + add_stock
+            incoming_cost = Decimal(str(request.data.get('cost_price', product.cost_price)))
+            incoming_sell = Decimal(str(request.data.get('selling_price', product.selling_price)))
+
+            product.cost_price = round(
+                ((product.stock * product.cost_price) + (add_stock * incoming_cost)) / new_stock, 2
+            )
+            product.selling_price = round(
+                ((product.stock * product.selling_price) + (add_stock * incoming_sell)) / new_stock, 2
+            )
+            product.stock = new_stock
+        else:
+            # Direct edit — no stock change, update prices directly
+            if 'cost_price' in request.data:
+                product.cost_price = Decimal(str(request.data['cost_price']))
+            if 'selling_price' in request.data:
+                product.selling_price = Decimal(str(request.data['selling_price']))
+
+        # Always allow updating name and unit
+        if 'name' in request.data:
+            product.name = request.data['name']
+        if 'unit' in request.data:
+            product.unit = request.data['unit']
+
+        product.save()
+        return Response(ProductInventorySerializer(product).data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
